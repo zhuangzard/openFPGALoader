@@ -54,7 +54,7 @@ void Anlogic::reset()
 	_jtag->toggleClk(200000);
 }
 
-void Anlogic::program(unsigned int offset)
+void Anlogic::program(unsigned int offset, bool unprotect_flash)
 {
 	if (_mode == Device::NONE_MODE)
 		return;
@@ -81,7 +81,7 @@ void Anlogic::program(unsigned int offset)
 	int len = bit.getLength() / 8;
 
 	if (_mode == Device::SPI_MODE) {
-		SPIFlash flash(this, _verbose);
+		SPIFlash flash(this, unprotect_flash, _verbose);
 
 		for (int i = 0; i < 5; i++)
 			_jtag->shiftIR(BYPASS, IRLENGTH);

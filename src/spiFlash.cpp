@@ -64,9 +64,9 @@
 /* Global Block Protection unlock */
 #define FLASH_ULBPR 0x98
 
-SPIFlash::SPIFlash(SPIInterface *spi, int8_t verbose):
+SPIFlash::SPIFlash(SPIInterface *spi, bool unprotect, int8_t verbose):
 	_spi(spi), _verbose(verbose), _jedec_id(0),
-	_flash_model(NULL)
+	_flash_model(NULL), _unprotect(unprotect)
 {
 	read_id();
 }
@@ -236,14 +236,42 @@ int SPIFlash::erase_and_prog(int base_addr, uint8_t *data, int len)
 {
 	if (_jedec_id == 0)
 		read_id();
+	bool must_relock = false; // used to relock after write;
 
-	/* check Block Protect Bits */
+	/* microchip SST26VF032B have global lock set
+	 * at powerup. global unlock must be send inconditionally
+	 * with or without block protection
+	 */
 	if (_jedec_id == 0xbf2642bf) { // microchip SST26VF032B
 		if (!global_unlock())
 			return -1;
-	} else {
-		uint8_t status = read_status_reg();
-		if ((status & 0x1c) !=0) {
+	} 
+	/* check Block Protect Bits (hide WIP/WEN bits) */
+	uint8_t status = read_status_reg() & ~0x03;
+	if (_verbose > 0)
+		display_status_reg(status);
+	/* if known chip */
+	if (_flash_model) {
+		/* compute protected area */
+		uint32_t lock_len = bp_to_len(status);
+		printf("%08x %08x %02x\n", base_addr, lock_len, status);
+		/* if overlap */
+		if ((uint32_t)base_addr < lock_len)
+			must_relock = true;
+	} else {  // unknown chip: basic test
+		printWarn("flash chip unknown: use basic protection detection");
+		if ((status & 0x1c) != 0)
+			must_relock = true;
+	}
+
+	/* if it's needs to unlock */
+	if (must_relock) {
+		printf("unlock blocks\n");
+		if (!_unprotect) {
+			printError("Error: block protection is set");
+			printError("       can't unlock without --unprotect");
+			throw std::runtime_error("memory locked");
+		} else  {
 			if (disable_protection() != 0)
 				return -1;
 		}
@@ -262,6 +290,13 @@ int SPIFlash::erase_and_prog(int base_addr, uint8_t *data, int len)
 		progress.display(addr);
 	}
 	progress.done();
+
+	/* TODO: relock blocks */
+	if (must_relock) {
+		enable_protection(status);
+		if (_verbose > 0)
+			display_status_reg(read_status_reg());
+	}
 	return 0;
 }
 

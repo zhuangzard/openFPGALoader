@@ -24,7 +24,7 @@ class Gowin: public Device, SPIInterface {
 		~Gowin();
 		int idCode() override;
 		void reset() override;
-		void program(unsigned int offset) override;
+		void program(unsigned int offset, bool unprotect_flash) override;
 		void programFlash();
 
 		/* spi interface */

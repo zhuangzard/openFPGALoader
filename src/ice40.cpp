@@ -50,7 +50,7 @@ void Ice40::reset()
 		printSuccess("DONE");
 }
 
-void Ice40::program(unsigned int offset)
+void Ice40::program(unsigned int offset, bool unprotect_flash)
 {
 	uint32_t timeout = 1000;
 
@@ -72,7 +72,8 @@ void Ice40::program(unsigned int offset)
 
 	_spi->gpio_clear(_rst_pin);
 
-	SPIFlash flash(reinterpret_cast<SPIInterface *>(_spi), _quiet);
+	SPIFlash flash(reinterpret_cast<SPIInterface *>(_spi), unprotect_flash,
+			_quiet);
 	flash.reset();
 	flash.power_up();
 
@@ -106,7 +107,7 @@ bool Ice40::dumpFlash(const std::string &filename,
 	/* prepare SPI access */
 	printInfo("Read Flash ", false);
 	try {
-		SPIFlash flash(reinterpret_cast<SPIInterface *>(_spi), _verbose);
+		SPIFlash flash(reinterpret_cast<SPIInterface *>(_spi), false, _verbose);
 		flash.reset();
 		flash.power_up();
 		flash.dump(filename, base_addr, len);

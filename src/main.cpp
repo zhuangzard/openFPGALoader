@@ -62,6 +62,7 @@ struct arguments {
 	int16_t altsetting;
 	uint16_t vid;
 	uint16_t pid;
+	bool unprotect_flash;
 };
 
 int parse_opt(int argc, char **argv, struct arguments *args, jtag_pins_conf_t *pins_config);
@@ -77,7 +78,7 @@ int main(int argc, char **argv)
 	/* command line args. */
 	struct arguments args = {0, false, false, false, 0, "", "", "-", "", -1,
 			0, "-", false, false, false, false, Device::WR_SRAM, false,
-			false, false, "", "", "", -1, 0, false, -1, 0, 0};
+			false, false, "", "", "", -1, 0, false, -1, 0, 0, false};
 	/* parse arguments */
 	try {
 		if (parse_opt(argc, argv, &args, &pins_config))
@@ -192,7 +193,9 @@ int main(int argc, char **argv)
 	/* FLASH direct access */
 	if (args.spi || (board && board->mode == COMM_SPI)) {
 		FtdiSpi *spi = NULL;
-		spi_pins_conf_t pins_config = board->spi_pins_config;
+		spi_pins_conf_t pins_config;
+		if (board)
+			pins_config = board->spi_pins_config;
 
 		try {
 			spi = new FtdiSpi(cable.config, pins_config, args.freq, args.verbose > 0);
@@ -212,7 +215,7 @@ int main(int argc, char **argv)
 					target.dumpFlash(args.bit_file, args.offset, args.file_size);
 				}
 			} else {
-				target.program(args.offset);
+				target.program(args.offset, args.unprotect_flash);
 			}
 		} else if (board->manufacturer == "lattice") {
 			Ice40 target(spi, args.bit_file, args.file_type,
@@ -224,7 +227,7 @@ int main(int argc, char **argv)
 					target.dumpFlash(args.bit_file, args.offset, args.file_size);
 				}
 			} else {
-				target.program(args.offset);
+				target.program(args.offset, args.unprotect_flash);
 			}
 		} else {
 			RawParser *bit = NULL;
@@ -233,7 +236,7 @@ int main(int argc, char **argv)
 				spi->gpio_clear(board->reset_pin, true);
 			}
 
-			SPIFlash flash((SPIInterface *)spi, args.verbose);
+			SPIFlash flash((SPIInterface *)spi, args.unprotect_flash, args.verbose);
 			flash.power_up();
 			flash.reset();
 			flash.read_id();
@@ -259,7 +262,11 @@ int main(int argc, char **argv)
 					printSuccess("DONE");
 				}
 
-				flash.erase_and_prog(args.offset, bit->getData(), bit->getLength()/8);
+				try {
+					flash.erase_and_prog(args.offset, bit->getData(), bit->getLength()/8);
+				} catch (std::exception &e) {
+					printError("FAIL: " + string(e.what()));
+				}
 
 				if (args.verify)
 					flash.verify(args.offset, bit->getData(), bit->getLength() / 8);
@@ -579,6 +586,8 @@ int parse_opt(int argc, char **argv, struct arguments *args, jtag_pins_conf_t *p
 				cxxopts::value<bool>(args->reset))
 			("spi",   "SPI mode (only for FTDI in serial mode)",
 				cxxopts::value<bool>(args->spi))
+			("unprotect-flash",   "Unprotect flash blocks",
+				cxxopts::value<bool>(args->unprotect_flash))
 			("v,verbose", "Produce verbose output", cxxopts::value<bool>(verbose))
 			("verbose-level", "verbose level -1: quiet, 0: normal, 1:verbose, 2:debug",
 				cxxopts::value<int8_t>(verbose_level))

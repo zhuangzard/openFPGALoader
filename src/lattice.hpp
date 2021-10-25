@@ -25,9 +25,9 @@ class Lattice: public Device, SPIInterface {
 		int idCode() override;
 		int userCode();
 		void reset() override {}
-		void program(unsigned int offset) override;
+		void program(unsigned int offset, bool unprotect_flash) override;
 		bool program_mem();
-		bool program_flash(unsigned int offset);
+		bool program_flash(unsigned int offset, bool unprotect_flash);
 		bool Verify(std::vector<std::string> data, bool unlock = false);
 		bool dumpFlash(const std::string &filename,
 			uint32_t base_addr, uint32_t len) override;
@@ -52,7 +52,7 @@ class Lattice: public Device, SPIInterface {
 		lattice_family_t _fpga_family;
 
 		bool program_intFlash();
-		bool program_extFlash(unsigned int offset);
+		bool program_extFlash(unsigned int offset, bool unprotect_flash);
 		bool wr_rd(uint8_t cmd, uint8_t *tx, int tx_len,
 				uint8_t *rx, int rx_len, bool verbose = false);
 		void unlock();

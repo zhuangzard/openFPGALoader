@@ -402,7 +402,7 @@ bool Lattice::program_intFlash()
 	return true;
 }
 
-bool Lattice::program_extFlash(unsigned int offset)
+bool Lattice::program_extFlash(unsigned int offset, bool unprotect_flash)
 {
 	ConfigBitstreamParser *_bit;
 	if (_file_extension == "mcs")
@@ -441,7 +441,7 @@ bool Lattice::program_extFlash(unsigned int offset)
 	int length = _bit->getLength()/8;
 
 	/* test SPI */
-	SPIFlash flash(this, _verbose);
+	SPIFlash flash(this, unprotect_flash, _verbose);
 	flash.reset();
 	flash.read_id();
 	flash.display_status_reg(flash.read_status_reg());
@@ -455,7 +455,7 @@ bool Lattice::program_extFlash(unsigned int offset)
 	return ret;
 }
 
-bool Lattice::program_flash(unsigned int offset)
+bool Lattice::program_flash(unsigned int offset, bool unprotect_flash)
 {
 	/* read ID Code 0xE0 */
 	if (_verbose) {
@@ -496,7 +496,7 @@ bool Lattice::program_flash(unsigned int offset)
 	if (_file_extension == "jed")
 		retval = program_intFlash();
 	else
-		retval = program_extFlash(offset);
+		retval = program_extFlash(offset, unprotect_flash);
 
 	if (!retval)
 		return false;
@@ -521,11 +521,11 @@ bool Lattice::program_flash(unsigned int offset)
 	return true;
 }
 
-void Lattice::program(unsigned int offset)
+void Lattice::program(unsigned int offset, bool unprotect_flash)
 {
 	bool retval;
 	if (_mode == FLASH_MODE)
-		retval = program_flash(offset);
+		retval = program_flash(offset, unprotect_flash);
 	else if (_mode == MEM_MODE)
 		retval = program_mem();
 	if (!retval)
@@ -572,7 +572,7 @@ bool Lattice::dumpFlash(const string &filename,
 	_jtag->shiftDR(tmp, NULL, 16);
 
 	/* prepare SPI access */
-	SPIFlash flash(this, _verbose);
+	SPIFlash flash(this, false, _verbose);
 	flash.reset();
 	flash.dump(filename, base_addr, len);
 
