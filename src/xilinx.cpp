@@ -160,7 +160,7 @@ int Xilinx::idCode()
 	return id;
 }
 
-void Xilinx::program(unsigned int offset)
+void Xilinx::program(unsigned int offset, bool unprotect_flash)
 {
 	ConfigBitstreamParser *bit;
 	bool reverse = false;
@@ -230,7 +230,7 @@ void Xilinx::program(unsigned int offset)
 	}
 
 	if (_mode == Device::SPI_MODE) {
-		program_spi(bit, offset);
+		program_spi(bit, offset, unprotect_flash);
 		reset();
 	} else {
 		program_mem(bit);
@@ -264,7 +264,8 @@ bool Xilinx::load_bridge()
 	return true;
 }
 
-void Xilinx::program_spi(ConfigBitstreamParser * bit, unsigned int offset)
+void Xilinx::program_spi(ConfigBitstreamParser * bit, unsigned int offset,
+		bool unprotect_flash)
 {
 	/* first need to have bridge in RAM */
 	if (load_bridge() == false)
@@ -273,7 +274,8 @@ void Xilinx::program_spi(ConfigBitstreamParser * bit, unsigned int offset)
 	uint8_t *data = bit->getData();
 	int length = bit->getLength() / 8;
 
-	SPIFlash spiFlash(this, (_verbose ? 1 : (_quiet ? -1 : 0)));
+	SPIFlash spiFlash(this, unprotect_flash,
+			(_verbose ? 1 : (_quiet ? -1 : 0)));
 	spiFlash.reset();
 	spiFlash.read_id();
 	spiFlash.display_status_reg(spiFlash.read_status_reg());
@@ -435,7 +437,7 @@ bool Xilinx::dumpFlash(const std::string &filename,
 		return false;
 
 	/* prepare SPI access */
-	SPIFlash flash(this, _verbose);
+	SPIFlash flash(this, false, _verbose);
 
 	try {
 		flash.reset();

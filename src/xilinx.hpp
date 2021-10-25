@@ -22,8 +22,9 @@ class Xilinx: public Device, SPIInterface {
 				bool verify, int8_t verbose);
 		~Xilinx();
 
-		void program(unsigned int offset = 0) override;
-		void program_spi(ConfigBitstreamParser * bit, unsigned int offset = 0);
+		void program(unsigned int offset, bool unprotect_flash) override;
+		void program_spi(ConfigBitstreamParser * bit, unsigned int offset,
+				bool unprotect_flash);
 		void program_mem(ConfigBitstreamParser *bitfile);
 		bool dumpFlash(const std::string &filename,
 			uint32_t base_addr, uint32_t len) override;

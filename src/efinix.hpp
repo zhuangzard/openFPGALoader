@@ -25,7 +25,7 @@ class Efinix: public Device {
 			bool verify, int8_t verbose);
 		~Efinix();
 
-		void program(unsigned int offset = 0) override;
+		void program(unsigned int offset, bool unprotect_flash) override;
 		bool dumpFlash(const std::string &filename,
 			uint32_t base_addr, uint32_t len);
 		/* not supported in SPI Active mode */
@@ -33,7 +33,8 @@ class Efinix: public Device {
 		void reset() override;
 
 	private:
-		void programSPI(unsigned int offset, uint8_t *data, int length);
+		void programSPI(unsigned int offset, uint8_t *data, int length,
+				bool unprotect_flash);
 		void programJTAG(uint8_t *data, int length);
 		FtdiSpi *_spi;
 		FtdiJtagMPSSE *_ftdi_jtag;

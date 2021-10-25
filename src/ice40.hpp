@@ -19,7 +19,7 @@ class Ice40: public Device {
 			bool verify, int8_t verbose);
 		~Ice40();
 
-		void program(unsigned int offset = 0) override;
+		void program(unsigned int offset, bool unprotect_flash) override;
 		bool dumpFlash(const std::string &filename,
 			uint32_t base_addr, uint32_t len);
 		/* not supported in SPI Active mode */

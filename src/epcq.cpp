@@ -62,8 +62,8 @@ void EPCQ::read_id()
 		printf("silicon id 0x%x attendu 0x14\n", _silicon_id);
 }
 
-EPCQ::EPCQ(SPIInterface *spi, int8_t verbose):SPIFlash(spi, verbose),
-	_device_id(0), _silicon_id(0)
+EPCQ::EPCQ(SPIInterface *spi, bool unprotect_flash, int8_t verbose):
+	SPIFlash(spi, unprotect_flash, verbose), _device_id(0), _silicon_id(0)
 {}
 
 EPCQ::~EPCQ()

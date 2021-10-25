@@ -24,7 +24,7 @@ class Altera: public Device, SPIInterface {
 		~Altera();
 
 		void programMem(RawParser &_bit);
-		void program(unsigned int offset = 0) override;
+		void program(unsigned int offset, bool unprotect_flash) override;
 		/*!
 		 * \brief read len Byte starting at base_addr and store
 		 *        into filename

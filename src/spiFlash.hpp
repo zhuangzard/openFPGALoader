@@ -13,7 +13,7 @@
 
 class SPIFlash {
 	public:
-		SPIFlash(SPIInterface *spi, int8_t verbose);
+		SPIFlash(SPIInterface *spi, bool unprotect, int8_t verbose);
 		/* power */
 		virtual void power_up();
 		virtual void power_down();
@@ -116,6 +116,7 @@ class SPIFlash {
 		int8_t _verbose;
 		uint32_t _jedec_id; /**< CHIP ID */
 		flash_t *_flash_model; /**< detect flash model */
+		bool _unprotect; /**< allows to unprotect memory before write */
 };
 
 #endif  // SRC_SPIFLASH_HPP_

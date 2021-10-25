@@ -21,7 +21,7 @@ class Anlogic: public Device, SPIInterface {
 			Device::prog_type_t prg_type, bool verify, int8_t verbose);
 		~Anlogic();
 
-		void program(unsigned int offset = 0) override;
+		void program(unsigned int offset, bool unprotect_flash) override;
 		int idCode() override;
 		void reset() override;
 

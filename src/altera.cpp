@@ -165,7 +165,7 @@ bool Altera::load_bridge()
 	return true;
 }
 
-void Altera::program(unsigned int offset)
+void Altera::program(unsigned int offset, bool unprotect_flash)
 {
 	if (_mode == Device::NONE_MODE)
 		return;
@@ -213,7 +213,7 @@ void Altera::program(unsigned int offset)
 		}
 
 		/* GGM: TODO: fix this issue */
-		EPCQ epcq(this, 0);
+		EPCQ epcq(this, unprotect_flash, 0);
 
 		try {
 			epcq.reset();
@@ -243,7 +243,7 @@ bool Altera::dumpFlash(const std::string filename, uint32_t base_addr,
 		return false;
 	}
 
-	EPCQ epcq(this, 0);
+	EPCQ epcq(this, false, 0);
 
 	try {
 		epcq.reset();
