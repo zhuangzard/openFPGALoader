@@ -36,8 +36,8 @@ class Device {
 		Device(Jtag *jtag, std::string filename, const std::string &file_type,
 				bool verify, int8_t verbose = false);
 		virtual ~Device();
-		virtual void program(unsigned int offset = 0,
-				bool unprotect_flash = false) = 0;
+		virtual void program(unsigned int offset,
+				bool unprotect_flash) = 0;
 		virtual bool dumpFlash(const std::string &filename,
 			uint32_t base_addr, uint32_t len) {
 			(void)filename; (void) base_addr; (void) len;
