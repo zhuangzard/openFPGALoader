@@ -463,7 +463,7 @@ int main(int argc, char **argv)
 	if ((!args.bit_file.empty() || !args.file_type.empty())
 			&& args.prg_type != Device::RD_FLASH) {
 		try {
-			fpga->program(args.offset);
+			fpga->program(args.offset, args.unprotect_flash);
 		} catch (std::exception &e) {
 			printError("Error: Failed to program FPGA: " + string(e.what()));
 			delete(fpga);
