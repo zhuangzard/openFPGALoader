@@ -62,6 +62,7 @@ struct arguments {
 	int16_t altsetting;
 	uint16_t vid;
 	uint16_t pid;
+	uint32_t protect_flash;
 	bool unprotect_flash;
 };
 
@@ -78,7 +79,7 @@ int main(int argc, char **argv)
 	/* command line args. */
 	struct arguments args = {0, false, false, false, 0, "", "", "-", "", -1,
 			0, "-", false, false, false, false, Device::WR_SRAM, false,
-			false, false, "", "", "", -1, 0, false, -1, 0, 0, false};
+			false, false, "", "", "", -1, 0, false, -1, 0, 0, 0, false};
 	/* parse arguments */
 	try {
 		if (parse_opt(argc, argv, &args, &pins_config))
@@ -204,31 +205,27 @@ int main(int argc, char **argv)
 			return EXIT_FAILURE;
 		}
 
-		if (board->manufacturer == "efinix") {
-			Efinix target(spi, args.bit_file, args.file_type,
-				board->reset_pin, board->done_pin, board->oe_pin,
-				args.verify, args.verbose);
+		if (board) {
+			Device *target;
+			if (board->manufacturer == "efinix") {
+				target = new Efinix(spi, args.bit_file, args.file_type,
+					board->reset_pin, board->done_pin, board->oe_pin,
+					args.verify, args.verbose);
+			} else if (board->manufacturer == "lattice") {
+				target = new Ice40(spi, args.bit_file, args.file_type,
+					board->reset_pin, board->done_pin, args.verify, args.verbose);
+			}
 			if (args.prg_type == Device::RD_FLASH) {
 				if (args.file_size == 0) {
 					printError("Error: 0 size for dump");
 				} else {
-					target.dumpFlash(args.bit_file, args.offset, args.file_size);
+					target->dumpFlash(args.bit_file, args.offset, args.file_size);
 				}
 			} else {
-				target.program(args.offset, args.unprotect_flash);
+				target->program(args.offset, args.unprotect_flash);
 			}
-		} else if (board->manufacturer == "lattice") {
-			Ice40 target(spi, args.bit_file, args.file_type,
-				board->reset_pin, board->done_pin, args.verify, args.verbose);
-			if (args.prg_type == Device::RD_FLASH) {
-				if (args.file_size == 0) {
-					printError("Error: 0 size for dump");
-				} else {
-					target.dumpFlash(args.bit_file, args.offset, args.file_size);
-				}
-			} else {
-				target.program(args.offset, args.unprotect_flash);
-			}
+			if (args.protect_flash)
+				target->protect_flash(args.protect_flash);
 		} else {
 			RawParser *bit = NULL;
 			if (board->reset_pin) {
@@ -275,6 +272,8 @@ int main(int argc, char **argv)
 			} else if (args.prg_type == Device::RD_FLASH) {
 				flash.dump(args.bit_file, args.offset, args.file_size);
 			}
+			if (args.protect_flash)
+				flash.enable_protection(args.protect_flash);
 
 			if (board->reset_pin)
 				spi->gpio_set(board->reset_pin, true);
@@ -472,6 +471,11 @@ int main(int argc, char **argv)
 		}
 	}
 
+	/* protect SPI flash */
+	if (args.protect_flash != 0) {
+		fpga->protect_flash(args.protect_flash);
+	}
+
 	if (args.prg_type == Device::RD_FLASH) {
 		if (args.file_size == 0) {
 			printError("Error: 0 size for dump");
@@ -580,6 +584,8 @@ int parse_opt(int argc, char **argv, struct arguments *args, jtag_pins_conf_t *p
 				cxxopts::value<vector<string>>(pins))
 			("probe-firmware", "firmware for JTAG probe (usbBlasterII)",
 				cxxopts::value<string>(args->probe_firmware))
+			("protect-flash",   "protect SPI flash area",
+				cxxopts::value<uint32_t>(args->protect_flash))
 			("quiet", "Produce quiet output (no progress bar)",
 				cxxopts::value<bool>(quiet))
 			("r,reset",   "reset FPGA after operations",
@@ -721,6 +727,7 @@ int parse_opt(int argc, char **argv, struct arguments *args, jtag_pins_conf_t *p
 			args->file_type.empty() &&
 			!args->is_list_command &&
 			!args->detect &&
+			!args->protect_flash &&
 			!args->reset) {
 			printError("Error: bitfile not specified");
 			cout << options.help() << endl;
