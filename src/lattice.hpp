@@ -32,6 +32,11 @@ class Lattice: public Device, SPIInterface {
 		bool dumpFlash(const std::string &filename,
 			uint32_t base_addr, uint32_t len) override;
 
+		/*!
+		 * \brief protect SPI flash blocks
+		 */
+		bool protect_flash(uint32_t len) override;
+
 		/* spi interface */
 		int spi_put(uint8_t cmd, uint8_t *tx, uint8_t *rx,
 		uint32_t len) override;
@@ -55,6 +60,18 @@ class Lattice: public Device, SPIInterface {
 		bool program_extFlash(unsigned int offset, bool unprotect_flash);
 		bool wr_rd(uint8_t cmd, uint8_t *tx, int tx_len,
 				uint8_t *rx, int rx_len, bool verbose = false);
+		/*!
+		 * \brief mode device to SPI access
+		 */
+		bool pre_extFlash();
+		/*!
+		 * \brief refresh device: reload bitstream from flash
+		 */
+		bool refresh();
+		/*!
+		 * \brief erase SRAM
+		 */
+		bool clearSRAM();
 		void unlock();
 		bool EnableISC(uint8_t flash_mode);
 		bool DisableISC();
