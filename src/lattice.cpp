@@ -402,6 +402,68 @@ bool Lattice::program_intFlash()
 	return true;
 }
 
+bool Lattice::pre_extFlash()
+{
+	/*IR = 0h3A, DR=0hFE,0h68. Enter RUNTESTIDLE.
+	 * thank @GregDavill
+	 * https://twitter.com/GregDavill/status/1251786406441086977
+	 */
+	_jtag->shiftIR(0x3A, 8, Jtag::EXIT1_IR);
+	uint8_t tmp[2] = {0xFE, 0x68};
+	_jtag->shiftDR(tmp, NULL, 16);
+	return true;
+}
+
+bool Lattice::refresh()
+{
+	/* ISC REFRESH 0x79 */
+	printInfo("Refresh: ", false);
+	if (loadConfiguration() == false) {
+		printError("FAIL");
+		displayReadReg(readStatusReg());
+		return false;
+	} else {
+		printSuccess("DONE");
+	}
+
+	/* bypass */
+	wr_rd(0xff, NULL, 0, NULL, 0);
+	_jtag->go_test_logic_reset();
+	return true;
+}
+
+bool Lattice::clearSRAM()
+{
+	/* preload 0x1C */
+	uint8_t tx_buf[26];
+	memset(tx_buf, 0xff, 26);
+	wr_rd(0x1C, tx_buf, 26, NULL, 0);
+
+	wr_rd(0xFf, NULL, 0, NULL, 0);
+
+	/* ISC Enable 0xC6 */
+	printInfo("Enable configuration: ", false);
+	if (!EnableISC(0x00)) {
+		printError("FAIL");
+		displayReadReg(readStatusReg());
+		return false;
+	} else {
+		printSuccess("DONE");
+	}
+
+	/* ISC ERASE */
+	printInfo("SRAM erase: ", false);
+	if (flashErase(FLASH_ERASE_SRAM) == false) {
+		printError("FAIL");
+		displayReadReg(readStatusReg());
+		return false;
+	} else {
+		printSuccess("DONE");
+	}
+
+	return DisableISC();
+}
+
 bool Lattice::program_extFlash(unsigned int offset, bool unprotect_flash)
 {
 	ConfigBitstreamParser *_bit;
@@ -429,13 +491,7 @@ bool Lattice::program_extFlash(unsigned int offset, bool unprotect_flash)
 	if (_verbose)
 		_bit->displayHeader();
 
-	/*IR = 0h3A, DR=0hFE,0h68. Enter RUNTESTIDLE.
-	 * thank @GregDavill
-	 * https://twitter.com/GregDavill/status/1251786406441086977
-	 */
-	_jtag->shiftIR(0x3A, 8, Jtag::EXIT1_IR);
-	uint8_t tmp[2] = {0xFE, 0x68};
-	_jtag->shiftDR(tmp, NULL, 16);
+	pre_extFlash();
 
 	uint8_t *data = _bit->getData();
 	int length = _bit->getLength()/8;
@@ -463,34 +519,8 @@ bool Lattice::program_flash(unsigned int offset, bool unprotect_flash)
 		displayReadReg(readStatusReg());
 	}
 
-	/* preload 0x1C */
-	uint8_t tx_buf[26];
-	memset(tx_buf, 0xff, 26);
-	wr_rd(0x1C, tx_buf, 26, NULL, 0);
-
-	wr_rd(0xFf, NULL, 0, NULL, 0);
-
-	/* ISC Enable 0xC6 */
-	printInfo("Enable configuration: ", false);
-	if (!EnableISC(0x00)) {
-		printError("FAIL");
-		displayReadReg(readStatusReg());
-		return false;
-	} else {
-		printSuccess("DONE");
-	}
-
-	/* ISC ERASE */
-	printInfo("SRAM erase: ", false);
-	if (flashErase(FLASH_ERASE_SRAM) == false) {
-		printError("FAIL");
-		displayReadReg(readStatusReg());
-		return false;
-	} else {
-		printSuccess("DONE");
-	}
-
-	DisableISC();
+	/* clear current SRAM content */
+	clearSRAM();
 
 	bool retval;
 	if (_file_extension == "jed")
@@ -505,19 +535,8 @@ bool Lattice::program_flash(unsigned int offset, bool unprotect_flash)
 	/* reload bitstream from flash */
 	/* *************************** */
 
-	/* ISC REFRESH 0x79 */
-	printInfo("Refresh: ", false);
-	if (loadConfiguration() == false) {
-		printError("FAIL");
-		displayReadReg(readStatusReg());
-		return false;
-	} else {
-		printSuccess("DONE");
-	}
+	refresh();
 
-	/* bypass */
-	wr_rd(0xff, NULL, 0, NULL, 0);
-	_jtag->go_test_logic_reset();
 	return true;
 }
 
@@ -535,62 +554,37 @@ void Lattice::program(unsigned int offset, bool unprotect_flash)
 bool Lattice::dumpFlash(const string &filename,
 		uint32_t base_addr, uint32_t len)
 {
-	/* idem program */
+	clearSRAM();
 
-	/* preload 0x1C */
-	uint8_t tx_buf[26];
-	memset(tx_buf, 0xff, 26);
-	wr_rd(0x1C, tx_buf, 26, NULL, 0);
-
-	wr_rd(0xFf, NULL, 0, NULL, 0);
-
-	/* ISC Enable 0xC6 */
-	printInfo("Enable configuration: ", false);
-	if (!EnableISC(0x00)) {
-		printError("FAIL");
-		displayReadReg(readStatusReg());
-		return false;
-	} else {
-		printSuccess("DONE");
-	}
-
-	/* ISC ERASE */
-	printInfo("SRAM erase: ", false);
-	if (flashErase(FLASH_ERASE_SRAM) == false) {
-		printError("FAIL");
-		displayReadReg(readStatusReg());
-		return false;
-	} else {
-		printSuccess("DONE");
-	}
-
-	DisableISC();
-
-	/* switch to SPI mode */
-	_jtag->shiftIR(0x3A, 8, Jtag::EXIT1_IR);
-	uint8_t tmp[2] = {0xFE, 0x68};
-	_jtag->shiftDR(tmp, NULL, 16);
+	/* enable SPI flash access */
+	pre_extFlash();
 
 	/* prepare SPI access */
 	SPIFlash flash(this, false, _verbose);
 	flash.reset();
 	flash.dump(filename, base_addr, len);
 
-	/* ISC REFRESH 0x79 */
-	printInfo("Refresh: ", false);
-	if (loadConfiguration() == false) {
-		printError("FAIL");
-		displayReadReg(readStatusReg());
-		return false;
-	} else {
-		printSuccess("DONE");
-	}
-
-	/* bypass */
-	wr_rd(0xff, NULL, 0, NULL, 0);
-	_jtag->go_test_logic_reset();
+	/* reload bitstream */
+	refresh();
 
 	return true;
+}
+
+bool Lattice::protect_flash(uint32_t len)
+{
+	/* clear SRAM before SPI access */
+	if (!clearSRAM())
+		return false;
+	/* move device to spi access */
+	if (!pre_extFlash())
+		return false;
+	/* spi flash access */
+	SPIFlash flash(this, false, _verbose);
+	flash.reset();
+	/* configure flash protection */
+	flash.enable_protection(len);
+	/* reload bitstream */
+	return refresh();
 }
 
 /* flash mode :
