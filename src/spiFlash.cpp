@@ -68,6 +68,8 @@ SPIFlash::SPIFlash(SPIInterface *spi, bool unprotect, int8_t verbose):
 	_spi(spi), _verbose(verbose), _jedec_id(0),
 	_flash_model(NULL), _unprotect(unprotect)
 {
+	reset();
+	power_up();
 	read_id();
 }
 
@@ -524,7 +526,7 @@ int SPIFlash::enable_protection(uint8_t protect_code)
 	return 0;
 }
 
-int SPIFlash::enable_protection(int length)
+int SPIFlash::enable_protection(uint32_t length)
 {
 	/* flash device is not listed: can't know BPx position, nor
 	 * TB offset, nor TB non-volatile vs OTP */

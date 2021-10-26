@@ -37,7 +37,7 @@ class SPIFlash {
 		 * \param[in] length: TODO
 		 * \return -1 if write enable or enabling failed
 		 */
-		int enable_protection(int len);
+		int enable_protection(uint32_t len);
 		/*!
 		 * \brief unlock all sectors: specific to
 		 * Microchip SST26VF032B / SST26VF032BA
@@ -94,6 +94,7 @@ class SPIFlash {
 		uint8_t read_status_reg();
 		/* display/info */
 		void display_status_reg(uint8_t reg);
+		void display_status_reg() {display_status_reg(read_status_reg());}
 		virtual void read_id();
 		uint16_t readNonVolatileCfgReg();
 		uint16_t readVolatileCfgReg();
