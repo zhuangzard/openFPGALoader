@@ -300,7 +300,7 @@ int Altera::spi_put(uint8_t cmd, uint8_t *tx, uint8_t *rx, uint32_t len)
 		}
 	}
 
-	return len;
+	return 0;
 }
 int Altera::spi_put(uint8_t *tx, uint8_t *rx, uint32_t len)
 {
