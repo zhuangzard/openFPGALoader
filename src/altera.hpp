@@ -35,6 +35,10 @@ class Altera: public Device, SPIInterface {
 		 */
 		bool dumpFlash(const std::string filename, uint32_t base_addr,
 				uint32_t len);
+		/*!
+		 * \brief protect SPI flash blocks
+		 */
+		bool protect_flash(uint32_t len) override;
 		int idCode() override;
 		void reset() override;
 

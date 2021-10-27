@@ -257,6 +257,24 @@ bool Altera::dumpFlash(const std::string filename, uint32_t base_addr,
 	return ret;
 }
 
+bool Altera::protect_flash(uint32_t len)
+{
+	/* try to load spiOverJtag bridge
+	 * to have an access to SPI flash
+	 */
+	if (!load_bridge()) {
+		printError("Fail to load bridge");
+		return false;
+	}
+
+	EPCQ epcq(this, false, 0);
+	epcq.enable_protection(len);
+
+	reset();
+
+	return true;
+}
+
 int Altera::idCode()
 {
 	unsigned char tx_data[4] = {IDCODE};
