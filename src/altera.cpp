@@ -223,7 +223,7 @@ void Altera::program(unsigned int offset, bool unprotect_flash)
 	}
 }
 
-bool Altera::dumpFlash(const std::string filename, uint32_t base_addr,
+bool Altera::dumpFlash(const std::string &filename, uint32_t base_addr,
 		uint32_t len)
 {
 	int ret = true;
