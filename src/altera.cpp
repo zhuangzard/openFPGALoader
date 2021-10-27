@@ -220,18 +220,10 @@ void Altera::program(unsigned int offset, bool unprotect_flash)
 			throw std::runtime_error(e.what());
 		}
 
-		/* GGM: TODO: fix this issue */
 		EPCQ epcq(this, unprotect_flash, 0);
 
-		try {
-			epcq.reset();
-			epcq.read_id();
-			epcq.display_status_reg(epcq.read_status_reg());
-			epcq.erase_and_prog(offset, data, length);
-		} catch (std::exception &e) {
-			printError(e.what());
-			throw std::runtime_error(e.what());
-		}
+		if (epcq.erase_and_prog(offset, data, length) != 0)
+			throw std::runtime_error("Fail to write data");
 
 		if (_verify)
 			epcq.verify(offset, data, length, 256);
@@ -252,16 +244,10 @@ bool Altera::dumpFlash(const std::string filename, uint32_t base_addr,
 	}
 
 	EPCQ epcq(this, false, 0);
-
-	try {
-		epcq.reset();
-		ret = epcq.dump(filename, base_addr, len, 256);
-	} catch (std::exception &e) {
-		printError(e.what());
-		ret = false;
-	}
+	ret = epcq.dump(filename, base_addr, len, 256);
 
 	reset();
+
 	return ret;
 }
 
