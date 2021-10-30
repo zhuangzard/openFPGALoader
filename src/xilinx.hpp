@@ -28,6 +28,10 @@ class Xilinx: public Device, SPIInterface {
 		void program_mem(ConfigBitstreamParser *bitfile);
 		bool dumpFlash(const std::string &filename,
 			uint32_t base_addr, uint32_t len) override;
+		/*!
+		 * \brief protect SPI flash blocks
+		 */
+		bool protect_flash(uint32_t len) override;
 		int idCode() override;
 		void reset() override;
 

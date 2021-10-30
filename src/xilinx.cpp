@@ -288,7 +288,6 @@ void Xilinx::program_spi(ConfigBitstreamParser * bit, unsigned int offset,
 
 void Xilinx::program_mem(ConfigBitstreamParser *bitfile)
 {
-	if (_file_extension.empty()) return;
 	std::cout << "load program" << std::endl;
 	unsigned char tx_buf, rx_buf;
 	/*            comment                                TDI   TMS TCK
@@ -442,6 +441,28 @@ bool Xilinx::dumpFlash(const std::string &filename,
 	try {
 		flash.reset();
 		ret = flash.dump(filename, base_addr, len, 256);
+	} catch (std::exception &e) {
+		printError(e.what());
+		ret = false;
+	}
+
+	/* reset device */
+	reset();
+
+	return ret;
+}
+
+bool Xilinx::protect_flash(uint32_t len)
+{
+	int ret = true;
+	/* first need to have bridge in RAM */
+	if (load_bridge() == false)
+		return false;
+
+	try {
+		/* prepare SPI access */
+		SPIFlash flash(this, false, _verbose);
+		flash.enable_protection(len);
 	} catch (std::exception &e) {
 		printError(e.what());
 		ret = false;
