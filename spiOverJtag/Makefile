@@ -4,7 +4,7 @@ XILINX_PARTS := xc6slx45csg324 xc6slx100fgg484 \
 	xc7s50csga324
 XILINX_BIT_FILES := $(addsuffix .bit,$(addprefix spiOverJtag_, $(XILINX_PARTS)))
 
-ALTERA_PARTS := 10cl025256 ep4ce2217 5ce223
+ALTERA_PARTS := 10cl025256 ep4ce2217 5ce223 5ce423 5cse623
 ALTERA_BIT_FILES := $(addsuffix .rbf, $(addprefix spiOverJtag_, $(ALTERA_PARTS)))
 
 BIT_FILES := $(ALTERA_BIT_FILES) $(XILINX_BIT_FILES)
