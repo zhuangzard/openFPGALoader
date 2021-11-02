@@ -40,10 +40,11 @@ void Ice40::reset()
 	usleep(1000);
 	_spi->gpio_set(_rst_pin);
 	printInfo("Reset ", false);
+	usleep(12000);
 	do {
 		timeout--;
 		usleep(12000);
-	} while (((_spi->gpio_get(true) & _done_pin) == 0) || timeout > 0);
+	} while (((_spi->gpio_get(true) & _done_pin) == 0) && timeout > 0);
 	if (timeout == 0)
 		printError("FAIL");
 	else
@@ -133,4 +134,48 @@ bool Ice40::dumpFlash(const std::string &filename,
 		printSuccess("DONE");
 
 	return false;
+}
+
+bool Ice40::protect_flash(uint32_t len)
+{
+	/* SPI access: shutdown ICE40 */
+	_spi->gpio_clear(_rst_pin);
+	usleep(1000);
+	/* acess */
+	try {
+		SPIFlash flash(reinterpret_cast<SPIInterface *>(_spi), false, _verbose);
+		/* configure flash protection */
+		if (flash.enable_protection(len) == -1)
+			return false;
+	} catch (std::exception &e) {
+		printError("Fail");
+		printError(std::string(e.what()));
+		return false;
+	}
+
+	/* TODO: reset must return bool */
+	reset();
+	return ((_spi->gpio_get(true) & _done_pin) == 0) ? false : true;
+}
+
+bool Ice40::unprotect_flash()
+{
+	/* SPI access: shutdown ICE40 */
+	_spi->gpio_clear(_rst_pin);
+	usleep(1000);
+	/* acess */
+	try {
+		SPIFlash flash(reinterpret_cast<SPIInterface *>(_spi), false, _verbose);
+		/* configure flash protection */
+		if (flash.disable_protection() == -1)
+			return false;
+	} catch (std::exception &e) {
+		printError("Fail");
+		printError(std::string(e.what()));
+		return false;
+	}
+
+	/* TODO: reset must return bool */
+	reset();
+	return ((_spi->gpio_get(true) & _done_pin) == 0) ? false : true;
 }
