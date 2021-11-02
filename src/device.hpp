@@ -45,6 +45,8 @@ class Device {
 		virtual bool protect_flash(uint32_t len) {
 			(void) len;
 			printError("protect flash not supported"); return false;}
+		virtual bool unprotect_flash() {
+			printError("unprotect flash not supported"); return false;}
 		virtual int  idCode() = 0;
 		virtual void reset();
 
