@@ -200,6 +200,8 @@ int main(int argc, char **argv)
 			return EXIT_FAILURE;
 		}
 
+		int spi_ret = EXIT_SUCCESS;
+
 		if (board) {
 			Device *target;
 			if (board->manufacturer == "efinix") {
@@ -216,11 +218,15 @@ int main(int argc, char **argv)
 				} else {
 					target->dumpFlash(args.bit_file, args.offset, args.file_size);
 				}
-			} else {
+			} else if (args.prg_type == Device::WR_FLASH) {
 				target->program(args.offset, args.unprotect_flash);
 			}
+			if (args.unprotect_flash && args.bit_file.empty())
+				if (!target->unprotect_flash())
+					spi_ret = EXIT_FAILURE;
 			if (args.protect_flash)
-				target->protect_flash(args.protect_flash);
+				if (!target->protect_flash(args.protect_flash))
+					spi_ret = EXIT_FAILURE;
 		} else {
 			RawParser *bit = NULL;
 			if (board->reset_pin) {
@@ -267,8 +273,13 @@ int main(int argc, char **argv)
 			} else if (args.prg_type == Device::RD_FLASH) {
 				flash.dump(args.bit_file, args.offset, args.file_size);
 			}
+
+			if (args.unprotect_flash && args.bit_file.empty())
+				if (!flash.disable_protection())
+					spi_ret = EXIT_FAILURE;
 			if (args.protect_flash)
-				flash.enable_protection(args.protect_flash);
+				if (!flash.enable_protection(args.protect_flash))
+					spi_ret = EXIT_FAILURE;
 
 			if (board->reset_pin)
 				spi->gpio_set(board->reset_pin, true);
@@ -276,7 +287,7 @@ int main(int argc, char **argv)
 
 		delete spi;
 
-		return EXIT_SUCCESS;
+		return spi_ret;
 	}
 
 	/* ------------------- */
@@ -723,6 +734,7 @@ int parse_opt(int argc, char **argv, struct arguments *args, jtag_pins_conf_t *p
 			!args->is_list_command &&
 			!args->detect &&
 			!args->protect_flash &&
+			!args->unprotect_flash &&
 			!args->reset) {
 			printError("Error: bitfile not specified");
 			cout << options.help() << endl;
