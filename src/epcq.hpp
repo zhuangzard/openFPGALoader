@@ -20,6 +20,8 @@ class EPCQ: public SPIFlash {
 
 	void read_id() override;
 
+	void reset() override;
+
 	/* not supported */
 	void power_up() override {}
 	void power_down() override {}

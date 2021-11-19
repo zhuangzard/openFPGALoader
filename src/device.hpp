@@ -38,15 +38,17 @@ class Device {
 		virtual ~Device();
 		virtual void program(unsigned int offset,
 				bool unprotect_flash) = 0;
+
+		/**********************/
+		/*    flash access    */
+		/**********************/
 		virtual bool dumpFlash(const std::string &filename,
 			uint32_t base_addr, uint32_t len) {
 			(void)filename; (void) base_addr; (void) len;
 			printError("dump flash not supported"); return false;}
-		virtual bool protect_flash(uint32_t len) {
-			(void) len;
-			printError("protect flash not supported"); return false;}
-		virtual bool unprotect_flash() {
-			printError("unprotect flash not supported"); return false;}
+		virtual bool protect_flash(uint32_t len) = 0;
+		virtual bool unprotect_flash() = 0;
+
 		virtual int  idCode() = 0;
 		virtual void reset();
 

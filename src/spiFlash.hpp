@@ -17,7 +17,7 @@ class SPIFlash {
 		/* power */
 		virtual void power_up();
 		virtual void power_down();
-		void reset();
+		virtual void reset();
 		/* protection */
 		int write_enable();
 		int write_disable();

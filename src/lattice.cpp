@@ -402,8 +402,11 @@ bool Lattice::program_intFlash()
 	return true;
 }
 
-bool Lattice::pre_extFlash()
+bool Lattice::prepare_flash_access()
 {
+	/* clear SRAM before SPI access */
+	if (!clearSRAM())
+		return false;
 	/*IR = 0h3A, DR=0hFE,0h68. Enter RUNTESTIDLE.
 	 * thank @GregDavill
 	 * https://twitter.com/GregDavill/status/1251786406441086977
@@ -414,7 +417,7 @@ bool Lattice::pre_extFlash()
 	return true;
 }
 
-bool Lattice::refresh()
+bool Lattice::post_flash_access()
 {
 	/* ISC REFRESH 0x79 */
 	printInfo("Refresh: ", false);
@@ -491,7 +494,7 @@ bool Lattice::program_extFlash(unsigned int offset, bool unprotect_flash)
 	if (_verbose)
 		_bit->displayHeader();
 
-	pre_extFlash();
+	prepare_flash_access();
 
 	uint8_t *data = _bit->getData();
 	int length = _bit->getLength()/8;
@@ -519,14 +522,14 @@ bool Lattice::program_flash(unsigned int offset, bool unprotect_flash)
 		displayReadReg(readStatusReg());
 	}
 
-	/* clear current SRAM content */
-	clearSRAM();
-
 	bool retval;
-	if (_file_extension == "jed")
+	if (_file_extension == "jed") {
+		/* clear current SRAM content */
+		clearSRAM();
 		retval = program_intFlash();
-	else
+	} else {
 		retval = program_extFlash(offset, unprotect_flash);
+	}
 
 	if (!retval)
 		return false;
@@ -534,8 +537,7 @@ bool Lattice::program_flash(unsigned int offset, bool unprotect_flash)
 	/* *************************** */
 	/* reload bitstream from flash */
 	/* *************************** */
-
-	refresh();
+	post_flash_access();
 
 	return true;
 }
@@ -554,10 +556,8 @@ void Lattice::program(unsigned int offset, bool unprotect_flash)
 bool Lattice::dumpFlash(const string &filename,
 		uint32_t base_addr, uint32_t len)
 {
-	clearSRAM();
-
 	/* enable SPI flash access */
-	pre_extFlash();
+	prepare_flash_access();
 
 	/* prepare SPI access */
 	SPIFlash flash(this, false, _verbose);
@@ -565,26 +565,9 @@ bool Lattice::dumpFlash(const string &filename,
 	flash.dump(filename, base_addr, len);
 
 	/* reload bitstream */
-	refresh();
+	post_flash_access();
 
 	return true;
-}
-
-bool Lattice::protect_flash(uint32_t len)
-{
-	/* clear SRAM before SPI access */
-	if (!clearSRAM())
-		return false;
-	/* move device to spi access */
-	if (!pre_extFlash())
-		return false;
-	/* spi flash access */
-	SPIFlash flash(this, false, _verbose);
-	flash.reset();
-	/* configure flash protection */
-	flash.enable_protection(len);
-	/* reload bitstream */
-	return refresh();
 }
 
 /* flash mode :

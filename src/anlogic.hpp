@@ -26,11 +26,36 @@ class Anlogic: public Device, SPIInterface {
 		void reset() override;
 
 		/* spi interface */
+		/*!
+		 * \brief protect SPI flash blocks
+		 */
+		bool protect_flash(uint32_t len) override {
+			return SPIInterface::protect_flash(len, _verbose);
+		}
+
+		/*!
+		 * \brief protect SPI flash blocks
+		 */
+		bool unprotect_flash() override {
+			return SPIInterface::unprotect_flash(_verbose);
+		}
+
 		int spi_put(uint8_t cmd, uint8_t *tx, uint8_t *rx,
 			uint32_t len) override;
 		int spi_put(uint8_t *tx, uint8_t *rx, uint32_t len) override;
 		int spi_wait(uint8_t cmd, uint8_t mask, uint8_t cond,
 			uint32_t timeout, bool verbose=false) override;
+
+	protected:
+		/*!
+		 * \brief move device to SPI access
+		 */
+		virtual bool prepare_flash_access() override;
+		/*!
+		 * \brief end of device to SPI access
+		 */
+		virtual bool post_flash_access() override {reset(); return true;}
+
 	private:
 		SVF_jtag _svf;
 };

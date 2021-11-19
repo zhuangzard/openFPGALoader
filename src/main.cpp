@@ -482,6 +482,11 @@ int main(int argc, char **argv)
 		}
 	}
 
+	/* unprotect SPI flash */
+	if (args.unprotect_flash && args.bit_file.empty()) {
+		fpga->unprotect_flash();
+	}
+
 	/* protect SPI flash */
 	if (args.protect_flash != 0) {
 		fpga->protect_flash(args.protect_flash);

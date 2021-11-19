@@ -81,45 +81,23 @@ void Anlogic::program(unsigned int offset, bool unprotect_flash)
 	int len = bit.getLength() / 8;
 
 	if (_mode == Device::SPI_MODE) {
-		SPIFlash flash(this, unprotect_flash, _verbose);
+		prepare_flash_access();
 
-		for (int i = 0; i < 5; i++)
-			_jtag->shiftIR(BYPASS, IRLENGTH);
-		//Verify Device id.
-		//SIR 8 TDI (06) ;
-		//SDR 32 TDI (00000000) TDO (0a014c35) MASK (ffffffff) ;
-		//Boundary Scan Chain Contents
-		//Position 1: BG256
-		//Loading device with 'refresh' instruction.
-		_jtag->shiftIR(REFRESH, IRLENGTH);
-		//Loading device with 'bypass' & 'spi_program' instruction.
-		_jtag->shiftIR(BYPASS, IRLENGTH);
-		_jtag->shiftIR(SPI_PROGRAM, IRLENGTH);
-		for (int i = 0; i < 4; i++)
-			_jtag->toggleClk(50000);
+		try {
+			SPIFlash flash(this, unprotect_flash, _verbose);
+			flash.reset();
+			flash.read_id();
+			flash.display_status_reg(flash.read_status_reg());
 
-		flash.reset();
-		flash.read_id();
-		flash.display_status_reg(flash.read_status_reg());
+			flash.erase_and_prog(offset, data, len);
 
-		flash.erase_and_prog(offset, data, len);
-
-		if (_verify)
-			printWarn("writing verification not supported");
-
-		//Loading device with 'bypass' instruction.
-		_jtag->shiftIR(BYPASS, IRLENGTH);
-		////Loading device with 'refresh' instruction.
-		_jtag->shiftIR(REFRESH, IRLENGTH);
-		_jtag->toggleClk(20);
-		////Loading device with 'bypass' instruction.
-		for (int i = 0; i < 4; i++) {
-			_jtag->shiftIR(BYPASS, IRLENGTH);
-			_jtag->toggleClk(20);
+			if (_verify)
+				printWarn("writing verification not supported");
+		} catch (std::exception &e) {
+			printError(e.what());
 		}
-		_jtag->shiftIR(BYPASS, IRLENGTH);
-		_jtag->toggleClk(10000);
 
+		post_flash_access();
 		return;
 	}
 	if (_mode == Device::MEM_MODE) {
@@ -195,6 +173,26 @@ int Anlogic::idCode()
 		((rx_data[2] << 16) & 0x00ff0000) |
 		((rx_data[3] << 24) & 0xff000000));
 }
+
+bool Anlogic::prepare_flash_access()
+{
+	for (int i = 0; i < 5; i++)
+		_jtag->shiftIR(BYPASS, IRLENGTH);
+	//Verify Device id.
+	//SIR 8 TDI (06) ;
+	//SDR 32 TDI (00000000) TDO (0a014c35) MASK (ffffffff) ;
+	//Boundary Scan Chain Contents
+	//Position 1: BG256
+	//Loading device with 'refresh' instruction.
+	_jtag->shiftIR(REFRESH, IRLENGTH);
+	//Loading device with 'bypass' & 'spi_program' instruction.
+	_jtag->shiftIR(BYPASS, IRLENGTH);
+	_jtag->shiftIR(SPI_PROGRAM, IRLENGTH);
+	for (int i = 0; i < 4; i++)
+		_jtag->toggleClk(50000);
+	return true;
+}
+
 
 /* SPI wrapper
  * For read operation a delay of one bit is added

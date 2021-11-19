@@ -138,9 +138,8 @@ bool Ice40::dumpFlash(const std::string &filename,
 
 bool Ice40::protect_flash(uint32_t len)
 {
-	/* SPI access: shutdown ICE40 */
-	_spi->gpio_clear(_rst_pin);
-	usleep(1000);
+	/* SPI access */
+	prepare_flash_access();
 	/* acess */
 	try {
 		SPIFlash flash(reinterpret_cast<SPIInterface *>(_spi), false, _verbose);
@@ -153,16 +152,14 @@ bool Ice40::protect_flash(uint32_t len)
 		return false;
 	}
 
-	/* TODO: reset must return bool */
-	reset();
-	return ((_spi->gpio_get(true) & _done_pin) == 0) ? false : true;
+	/* reload */
+	return post_flash_access();
 }
 
 bool Ice40::unprotect_flash()
 {
-	/* SPI access: shutdown ICE40 */
-	_spi->gpio_clear(_rst_pin);
-	usleep(1000);
+	/* SPI access */
+	prepare_flash_access();
 	/* acess */
 	try {
 		SPIFlash flash(reinterpret_cast<SPIInterface *>(_spi), false, _verbose);
@@ -175,7 +172,20 @@ bool Ice40::unprotect_flash()
 		return false;
 	}
 
-	/* TODO: reset must return bool */
+	/* reload */
+	return post_flash_access();
+}
+
+bool Ice40::prepare_flash_access()
+{
+	/* SPI access: shutdown ICE40 */
+	_spi->gpio_clear(_rst_pin);
+	usleep(1000);
+	return true;
+}
+
+bool Ice40::post_flash_access()
+{
 	reset();
 	return ((_spi->gpio_get(true) & _done_pin) == 0) ? false : true;
 }

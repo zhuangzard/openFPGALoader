@@ -268,7 +268,7 @@ void Xilinx::program_spi(ConfigBitstreamParser * bit, unsigned int offset,
 		bool unprotect_flash)
 {
 	/* first need to have bridge in RAM */
-	if (load_bridge() == false)
+	if (prepare_flash_access() == false)
 		return;
 
 	uint8_t *data = bit->getData();
@@ -284,6 +284,8 @@ void Xilinx::program_spi(ConfigBitstreamParser * bit, unsigned int offset,
 	/* verify write if required */
 	if (_verify)
 		spiFlash.verify(offset, data, length, 256);
+
+	post_flash_access();
 }
 
 void Xilinx::program_mem(ConfigBitstreamParser *bitfile)
@@ -432,7 +434,7 @@ bool Xilinx::dumpFlash(const std::string &filename,
 
 	int ret = true;
 	/* first need to have bridge in RAM */
-	if (load_bridge() == false)
+	if (prepare_flash_access() == false)
 		return false;
 
 	/* prepare SPI access */
@@ -447,31 +449,7 @@ bool Xilinx::dumpFlash(const std::string &filename,
 	}
 
 	/* reset device */
-	reset();
-
-	return ret;
-}
-
-bool Xilinx::protect_flash(uint32_t len)
-{
-	int ret = true;
-	/* first need to have bridge in RAM */
-	if (load_bridge() == false)
-		return false;
-
-	try {
-		/* prepare SPI access */
-		SPIFlash flash(this, false, _verbose);
-		flash.enable_protection(len);
-	} catch (std::exception &e) {
-		printError(e.what());
-		ret = false;
-	}
-
-	/* reset device */
-	reset();
-
-	return ret;
+	return ret && post_flash_access();
 }
 
 /*                                */

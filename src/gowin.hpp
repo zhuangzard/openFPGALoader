@@ -28,6 +28,11 @@ class Gowin: public Device, SPIInterface {
 		void programFlash();
 
 		/* spi interface */
+		virtual bool protect_flash(uint32_t len) override {
+			(void) len;
+			printError("protect flash not supported"); return false;}
+		virtual bool unprotect_flash() override {
+			printError("unprotect flash not supported"); return false;}
 		int spi_put(uint8_t cmd, uint8_t *tx, uint8_t *rx,
 			uint32_t len) override;
 		int spi_put(uint8_t *tx, uint8_t *rx, uint32_t len) override;

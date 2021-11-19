@@ -20,6 +20,9 @@ class SPIInterface {
  public:
 	virtual ~SPIInterface() {}
 
+	bool protect_flash(uint32_t len, bool verbose);
+	bool unprotect_flash(bool verbose);
+
 	/*!
 	 * \brief send a command, followed by len byte.
 	 * \param[in] cmd: command/opcode to send
@@ -51,5 +54,16 @@ class SPIInterface {
 	 */
 	virtual int spi_wait(uint8_t cmd, uint8_t mask, uint8_t cond,
 			uint32_t timeout, bool verbose = false) = 0;
+
+ protected:
+	/*!
+	 * \brief prepare SPI flash access
+	 */
+	virtual bool prepare_flash_access() {return false;}
+	/*!
+	 * \brief end of SPI flash access
+	 */
+	virtual bool post_flash_access() {return false;}
+
 };
 #endif  // SRC_SPIINTERFACE_HPP_

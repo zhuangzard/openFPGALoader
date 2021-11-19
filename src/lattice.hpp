@@ -35,7 +35,15 @@ class Lattice: public Device, SPIInterface {
 		/*!
 		 * \brief protect SPI flash blocks
 		 */
-		bool protect_flash(uint32_t len) override;
+		bool protect_flash(uint32_t len) override {
+			return SPIInterface::protect_flash(len, _verbose);
+		}
+		/*!
+		 * \brief protect SPI flash blocks
+		 */
+		bool unprotect_flash() override {
+			return SPIInterface::unprotect_flash(_verbose);
+		}
 
 		/* spi interface */
 		int spi_put(uint8_t cmd, uint8_t *tx, uint8_t *rx,
@@ -61,13 +69,14 @@ class Lattice: public Device, SPIInterface {
 		bool wr_rd(uint8_t cmd, uint8_t *tx, int tx_len,
 				uint8_t *rx, int rx_len, bool verbose = false);
 		/*!
-		 * \brief mode device to SPI access
+		 * \brief move device to SPI access
 		 */
-		bool pre_extFlash();
+		bool prepare_flash_access() override;
 		/*!
-		 * \brief refresh device: reload bitstream from flash
+		 * \brief end of device to SPI access
+		 *        reload btistream from flash
 		 */
-		bool refresh();
+		bool post_flash_access() override;
 		/*!
 		 * \brief erase SRAM
 		 */

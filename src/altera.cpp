@@ -221,6 +221,9 @@ void Altera::program(unsigned int offset, bool unprotect_flash)
 		}
 
 		EPCQ epcq(this, unprotect_flash, 0);
+		epcq.reset();
+		epcq.read_id();
+		epcq.display_status_reg();
 
 		if (epcq.erase_and_prog(offset, data, length) != 0)
 			throw std::runtime_error("Fail to write data");
@@ -261,8 +264,28 @@ bool Altera::protect_flash(uint32_t len)
 		return false;
 	}
 
-	EPCQ epcq(this, false, 0);
+	EPCQ epcq(this, false, _verbose);
+	epcq.read_status_reg();
 	epcq.enable_protection(len);
+
+	reset();
+
+	return true;
+}
+
+bool Altera::unprotect_flash()
+{
+	/* try to load spiOverJtag bridge
+	 * to have an access to SPI flash
+	 */
+	if (!load_bridge()) {
+		printError("Fail to load bridge");
+		return false;
+	}
+
+	EPCQ epcq(this, false, _verbose);
+	epcq.read_status_reg();
+	epcq.disable_protection();
 
 	reset();
 
