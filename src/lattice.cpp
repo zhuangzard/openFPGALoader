@@ -274,8 +274,12 @@ bool Lattice::program_mem()
 	/* read ID Code 0xE0 and compare to bitstream */
 	uint32_t bit_idcode = std::stoul(_bit.getHeaderVal("idcode").c_str(), NULL, 16);
 	uint32_t idcode = idCode();
-	if (idcode != bit_idcode)
-		throw std::runtime_error("mismatch between target's idcode and bitstream idcode");
+	if (idcode != bit_idcode) {
+		char mess[256];
+		sprintf(mess, "mismatch between target's idcode and bitstream idcode\n"
+			"\texpected 0x%08X got 0x%08x", bit_idcode, idcode);
+		throw std::runtime_error(mess);
+	}
 
 	if (_verbose) {
 		printf("IDCode : %x\n", idcode);
@@ -601,8 +605,12 @@ bool Lattice::program_extFlash(unsigned int offset, bool unprotect_flash)
 	if (_file_extension == "bit") {
 		uint32_t bit_idcode = std::stoul(_bit->getHeaderVal("idcode").c_str(), NULL, 16);
 		uint32_t idcode = idCode();
-		if (idcode != bit_idcode)
-			throw std::runtime_error("mismatch between target's idcode and bitstream idcode");
+		if (idcode != bit_idcode) {
+			char mess[256];
+			sprintf(mess, "mismatch between target's idcode and bitstream idcode\n"
+				"\texpected 0x%08X got 0x%08x", bit_idcode, idcode);
+			throw std::runtime_error(mess);
+		}
 	}
 
 	prepare_flash_access();
@@ -612,8 +620,6 @@ bool Lattice::program_extFlash(unsigned int offset, bool unprotect_flash)
 
 	/* test SPI */
 	SPIFlash flash(this, unprotect_flash, _verbose);
-	flash.reset();
-	flash.read_id();
 	flash.read_status_reg();
 	flash.erase_and_prog(offset, data, length);
 
