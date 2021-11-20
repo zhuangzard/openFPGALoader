@@ -271,7 +271,7 @@ int SPIFlash::erase_and_prog(int base_addr, uint8_t *data, int len)
 		printf("unlock blocks\n");
 		if (!_unprotect) {
 			printError("Error: block protection is set");
-			printError("       can't unlock without --unprotect");
+			printError("       can't unlock without --unprotect-flash");
 			return -1;
 		} else  {
 			if (disable_protection() != 0)
