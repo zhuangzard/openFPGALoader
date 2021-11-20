@@ -277,7 +277,7 @@ bool Lattice::program_mem()
 	if (idcode != bit_idcode) {
 		char mess[256];
 		sprintf(mess, "mismatch between target's idcode and bitstream idcode\n"
-			"\texpected 0x%08X got 0x%08x", bit_idcode, idcode);
+			"\tbitstream has 0x%08X hardware requires 0x%08x", bit_idcode, idcode);
 		throw std::runtime_error(mess);
 	}
 
@@ -608,7 +608,7 @@ bool Lattice::program_extFlash(unsigned int offset, bool unprotect_flash)
 		if (idcode != bit_idcode) {
 			char mess[256];
 			sprintf(mess, "mismatch between target's idcode and bitstream idcode\n"
-				"\texpected 0x%08X got 0x%08x", bit_idcode, idcode);
+				"\tbitstream has 0x%08X hardware requires 0x%08x", bit_idcode, idcode);
 			throw std::runtime_error(mess);
 		}
 	}
