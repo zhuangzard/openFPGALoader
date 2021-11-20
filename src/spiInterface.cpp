@@ -25,7 +25,7 @@ bool SPIInterface::protect_flash(uint32_t len, bool verbose)
 		SPIFlash flash(this, false, verbose);
 		flash.reset();
 		/* configure flash protection */
-		//flash.enable_protection(len);
+		flash.enable_protection(len);
 	} catch (std::exception &e) {
 		printError(e.what());
 		ret = false;
@@ -49,7 +49,7 @@ bool SPIInterface::unprotect_flash(bool verbose)
 		SPIFlash flash(this, false, verbose);
 		flash.reset();
 		/* configure flash protection */
-		//flash.disable_protection();
+		flash.disable_protection();
 	} catch (std::exception &e) {
 		printError(e.what());
 		ret = false;

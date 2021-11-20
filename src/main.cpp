@@ -64,6 +64,7 @@ struct arguments {
 	uint16_t pid;
 	uint32_t protect_flash;
 	bool unprotect_flash;
+	string flash_sector;
 };
 
 int parse_opt(int argc, char **argv, struct arguments *args, jtag_pins_conf_t *pins_config);
@@ -79,7 +80,7 @@ int main(int argc, char **argv)
 	/* command line args. */
 	struct arguments args = {0, false, false, false, 0, "", "", "-", "", -1,
 			0, "-", false, false, false, false, Device::WR_SRAM, false,
-			false, false, "", "", "", -1, 0, false, -1, 0, 0, 0, false};
+			false, false, "", "", "", -1, 0, false, -1, 0, 0, 0, false, ""};
 	/* parse arguments */
 	try {
 		if (parse_opt(argc, argv, &args, &pins_config))
@@ -458,7 +459,7 @@ int main(int argc, char **argv)
 				args.prg_type, args.external_flash, args.verify, args.verbose);
 		} else if (fab == "lattice") {
 			fpga = new Lattice(jtag, args.bit_file, args.file_type,
-				args.prg_type, args.verify, args.verbose);
+				args.prg_type, args.flash_sector, args.verify, args.verbose);
 		} else {
 			printError("Error: manufacturer " + fab + " not supported");
 			delete(jtag);
@@ -580,6 +581,7 @@ int parse_opt(int argc, char **argv, struct arguments *args, jtag_pins_conf_t *p
 				cxxopts::value<unsigned int>(args->file_size))
 			("file-type",   "provides file type instead of let's deduced by using extension",
 				cxxopts::value<string>(args->file_type))
+			("flash-sector","flash sector (Lattice parts only)", cxxopts::value<string>(args->flash_sector))
 			("fpga-part",   "fpga model flavor + package", cxxopts::value<string>(args->fpga_part))
 			("freq",        "jtag frequency (Hz)", cxxopts::value<string>(freqo))
 			("f,write-flash",

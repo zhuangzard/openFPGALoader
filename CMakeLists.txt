@@ -73,6 +73,7 @@ set(OPENFPGALOADER_SOURCE
 	src/epcq.cpp
 	src/svf_jtag.cpp
 	src/jedParser.cpp
+	src/feaparser.cpp
 	src/display.cpp
 	src/jtag.cpp
 	src/ftdiJtagBitbang.cpp
@@ -121,6 +122,7 @@ set(OPENFPGALOADER_HEADERS
 	src/part.hpp
 	src/board.hpp
 	src/jedParser.hpp
+	src/feaparser.hpp
 	src/display.hpp
 	src/mcsParser.hpp
 	src/ftdipp_mpsse.hpp
