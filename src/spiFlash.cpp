@@ -254,6 +254,11 @@ int SPIFlash::erase_and_prog(int base_addr, uint8_t *data, int len)
 		display_status_reg(status);
 	/* if known chip */
 	if (_flash_model) {
+		/* check if offset + len fit in flash */
+		if ((unsigned int)(base_addr + len) > (_flash_model->nr_sector * 0x10000) - 1) {
+			printError("flash overflow");
+			return -1;
+		}
 		/* compute protected area */
 		uint32_t lock_len = bp_to_len(status);
 		printf("%08x %08x %02x\n", base_addr, lock_len, status);
@@ -413,12 +418,29 @@ void SPIFlash::display_status_reg(uint8_t reg)
 			if (reg & _flash_model->bp_offset[i])
 				bp |= 1 << i;
 	}
+
 	printf("RDSR : %02x\n", reg);
 	printf("WIP  : %d\n", reg&0x01);
 	printf("WEL  : %d\n", (reg>>1)&0x01);
 	printf("BP   : %x\n", bp);
-	printf("TB   : %d\n", tb);
-	printf("SRWD : %d\n", (((reg>>7)&0x01)));
+	if ((_jedec_id >> 8) != 0x9660) {
+		printf("TB   : %d\n", tb);
+	} else {  // ISSI IS25LP
+		printf("QE   : %d\n", ((reg >> 6) & 0x01));
+	}
+	printf("SRWD : %d\n", ((reg >> 7) & 0x01));
+
+	/* function register */
+	if ((_jedec_id >> 8) != 0x9660) {
+		_spi->spi_put(FLASH_RDFR, NULL, &reg, 1);
+		printf("\nFunction Register\n");
+		printf("RDFR : %02x\n", reg);
+		printf("RES  : %d\n", ((reg >> 0) & 0x01));
+		printf("TBS  : %d\n", ((reg >> 1) & 0x01));
+		printf("PSUS : %d\n", ((reg >> 2) & 0x01));
+		printf("ESUS : %d\n", ((reg >> 3) & 0x01));
+		printf("IRL  : %x\n", ((reg >> 4) & 0x0f));
+	}
 }
 
 uint8_t SPIFlash::read_status_reg()
@@ -592,8 +614,9 @@ int SPIFlash::enable_protection(uint32_t length)
 			printError("Error: enable protection failed\n");
 			return -1;
 		}
-		_spi->spi_put(reg_rd, &val, NULL, 1);
-		if (reg_rd != val) {
+		uint8_t rd_val;
+		_spi->spi_put(reg_rd, NULL, &rd_val, 1);
+		if (rd_val != val) {
 			printError("failed to update TB bit");
 			return -1;
 		}
