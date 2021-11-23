@@ -22,6 +22,8 @@ class SPIInterface {
 
 	bool protect_flash(uint32_t len, bool verbose);
 	bool unprotect_flash(bool verbose);
+	bool write(uint32_t offset, uint8_t *data, uint32_t len,
+		bool verify, bool unprotect_flash, bool verbose);
 
 	/*!
 	 * \brief send a command, followed by len byte.

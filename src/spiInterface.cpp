@@ -58,3 +58,29 @@ bool SPIInterface::unprotect_flash(bool verbose)
 	/* reload bitstream */
 	return ret && post_flash_access();
 }
+
+bool SPIInterface::write(uint32_t offset, uint8_t *data, uint32_t len,
+		bool verify, bool unprotect_flash, bool verbose)
+{
+	verbose = true;
+	printInfo("write generic");
+	bool ret = true;
+	if (!prepare_flash_access())
+		return false;
+
+	/* test SPI */
+	try {
+		SPIFlash flash(this, unprotect_flash, verbose);
+		flash.read_status_reg();
+		if (flash.erase_and_prog(offset, data, len) == -1)
+			ret = false;
+		if (verify && ret)
+			ret = flash.verify(offset, data, len);
+	} catch (std::exception &e) {
+		printError(e.what());
+		ret = false;
+	}
+
+	bool ret2 = post_flash_access();
+	return ret && ret2;
+}
