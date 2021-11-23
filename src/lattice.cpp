@@ -577,21 +577,29 @@ bool Lattice::clearSRAM()
 
 bool Lattice::program_extFlash(unsigned int offset, bool unprotect_flash)
 {
+	int ret;
 	ConfigBitstreamParser *_bit;
-	if (_file_extension == "mcs")
-		_bit = new McsParser(_filename, true, _verbose);
-	else if (_file_extension == "bit")
-		_bit = new LatticeBitParser(_filename, _verbose);
-	else
-		_bit = new RawParser(_filename, false);
 
 	printInfo("Open file ", false);
+	try {
+		if (_file_extension == "mcs")
+			_bit = new McsParser(_filename, true, _verbose);
+		else if (_file_extension == "bit")
+			_bit = new LatticeBitParser(_filename, _verbose);
+		else
+			_bit = new RawParser(_filename, false);
+	} catch (std::exception &e) {
+		printError("FAIL");
+		printError(e.what());
+		return false;
+	}
+
 	printSuccess("DONE");
 
-	int err = _bit->parse();
+	ret = _bit->parse();
 
 	printInfo("Parse file ", false);
-	if (err == EXIT_FAILURE) {
+	if (ret == EXIT_FAILURE) {
 		printError("FAIL");
 		delete _bit;
 		return false;
@@ -609,23 +617,14 @@ bool Lattice::program_extFlash(unsigned int offset, bool unprotect_flash)
 			char mess[256];
 			sprintf(mess, "mismatch between target's idcode and bitstream idcode\n"
 				"\tbitstream has 0x%08X hardware requires 0x%08x", bit_idcode, idcode);
-			throw std::runtime_error(mess);
+			printError(mess);
+			delete _bit;
+			return false;
 		}
 	}
 
-	prepare_flash_access();
-
-	uint8_t *data = _bit->getData();
-	int length = _bit->getLength()/8;
-
-	/* test SPI */
-	SPIFlash flash(this, unprotect_flash, _verbose);
-	flash.read_status_reg();
-	flash.erase_and_prog(offset, data, length);
-
-	int ret = true;
-	if (_verify)
-		ret = flash.verify(offset, data, length);
+	ret = SPIInterface::write(offset, _bit->getData(), _bit->getLength() / 8,
+			_verify, unprotect_flash, _verbose);
 
 	delete _bit;
 	return ret;
@@ -665,21 +664,15 @@ bool Lattice::program_flash(unsigned int offset, bool unprotect_flash)
 			retval = program_intFlash_MachXO3D(_jed);
 		else
 			retval = program_intFlash(_jed);
+		return post_flash_access() && retval;
 	} else if (_file_extension == "fea") {
 		/* clear current SRAM content */
 		clearSRAM();
 		retval = program_fea_MachXO3D();
+		return post_flash_access() && retval;
 	} else {
-		retval = program_extFlash(offset, unprotect_flash);
+		return program_extFlash(offset, unprotect_flash);
 	}
-
-	if (!retval)
-		return false;
-
-	/* *************************** */
-	/* reload bitstream from flash */
-	/* *************************** */
-	post_flash_access();
 
 	return true;
 }
