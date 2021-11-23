@@ -423,7 +423,7 @@ void SPIFlash::display_status_reg(uint8_t reg)
 	printf("WIP  : %d\n", reg&0x01);
 	printf("WEL  : %d\n", (reg>>1)&0x01);
 	printf("BP   : %x\n", bp);
-	if ((_jedec_id >> 8) != 0x9660) {
+	if ((_jedec_id >> 8) != 0x9d60) {
 		printf("TB   : %d\n", tb);
 	} else {  // ISSI IS25LP
 		printf("QE   : %d\n", ((reg >> 6) & 0x01));
@@ -431,7 +431,7 @@ void SPIFlash::display_status_reg(uint8_t reg)
 	printf("SRWD : %d\n", ((reg >> 7) & 0x01));
 
 	/* function register */
-	if ((_jedec_id >> 8) != 0x9660) {
+	if ((_jedec_id >> 8) == 0x9d60) {
 		_spi->spi_put(FLASH_RDFR, NULL, &reg, 1);
 		printf("\nFunction Register\n");
 		printf("RDFR : %02x\n", reg);
@@ -566,7 +566,7 @@ int SPIFlash::enable_protection(uint32_t length)
 	 */
 	if (_flash_model->tb_otp) {
 		uint8_t status;
-		/* red TB: not aloways in status register */
+		/* read TB: not always in status register */
 		switch (_flash_model->tb_register) {
 		case STATR:  // status register
 			status = read_status_reg();
