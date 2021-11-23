@@ -208,7 +208,7 @@ int main(int argc, char **argv)
 
 		int spi_ret = EXIT_SUCCESS;
 
-		if (board) {
+		if (board && board->manufacturer != "none") {
 			Device *target;
 			if (board->manufacturer == "efinix") {
 				target = new Efinix(spi, args.bit_file, args.file_type,
@@ -241,9 +241,7 @@ int main(int argc, char **argv)
 			}
 
 			SPIFlash flash((SPIInterface *)spi, args.unprotect_flash, args.verbose);
-			flash.power_up();
-			flash.reset();
-			flash.read_id();
+			flash.display_status_reg();
 
 			if (args.prg_type != Device::RD_FLASH &&
 					(!args.bit_file.empty() || !args.file_type.empty())) {
