@@ -33,8 +33,7 @@ class Altera: public Device, SPIInterface {
 		 * \param[in] len: length (in Byte)
 		 * \return false if read fails or filename can't be open, true otherwise
 		 */
-		bool dumpFlash(const std::string &filename, uint32_t base_addr,
-				uint32_t len) override;
+		bool dumpFlash(uint32_t base_addr, uint32_t len) override;
 
 		int idCode() override;
 		void reset() override;

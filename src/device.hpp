@@ -42,9 +42,8 @@ class Device {
 		/**********************/
 		/*    flash access    */
 		/**********************/
-		virtual bool dumpFlash(const std::string &filename,
-			uint32_t base_addr, uint32_t len) {
-			(void)filename; (void) base_addr; (void) len;
+		virtual bool dumpFlash(uint32_t base_addr, uint32_t len) {
+			(void) base_addr; (void) len;
 			printError("dump flash not supported"); return false;}
 		virtual bool protect_flash(uint32_t len) = 0;
 		virtual bool unprotect_flash() = 0;

@@ -515,8 +515,9 @@ int SPIFlash::disable_protection()
 	if (read_status_reg() != 0) {
 		std::cout << "disable protection failed" << std::endl;
 		return -1;
-	} else
-		return 0;
+	}
+
+	return 0;
 }
 
 /* write protect code to status register

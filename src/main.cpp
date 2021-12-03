@@ -222,7 +222,7 @@ int main(int argc, char **argv)
 				if (args.file_size == 0) {
 					printError("Error: 0 size for dump");
 				} else {
-					target->dumpFlash(args.bit_file, args.offset, args.file_size);
+					target->dumpFlash(args.offset, args.file_size);
 				}
 			} else if (args.prg_type == Device::WR_FLASH) {
 				target->program(args.offset, args.unprotect_flash);
@@ -495,7 +495,7 @@ int main(int argc, char **argv)
 		if (args.file_size == 0) {
 			printError("Error: 0 size for dump");
 		} else {
-			fpga->dumpFlash(args.bit_file, args.offset, args.file_size);
+			fpga->dumpFlash(args.offset, args.file_size);
 		}
 	}
 

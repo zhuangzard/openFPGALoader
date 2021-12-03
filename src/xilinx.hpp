@@ -26,20 +26,19 @@ class Xilinx: public Device, SPIInterface {
 		void program_spi(ConfigBitstreamParser * bit, unsigned int offset,
 				bool unprotect_flash);
 		void program_mem(ConfigBitstreamParser *bitfile);
-		bool dumpFlash(const std::string &filename,
-			uint32_t base_addr, uint32_t len) override;
+		bool dumpFlash(uint32_t base_addr, uint32_t len) override;
 
 		/*!
 		 * \brief protect SPI flash blocks
 		 */
 		bool protect_flash(uint32_t len) override {
-			return SPIInterface::protect_flash(len, _verbose);
+			return SPIInterface::protect_flash(len);
 		}
 		/*!
 		 * \brief unprotect SPI flash blocks
 		 */
 		bool unprotect_flash() override {
-			return SPIInterface::unprotect_flash(_verbose);
+			return SPIInterface::unprotect_flash();
 		}
 
 		int idCode() override;

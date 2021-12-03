@@ -30,14 +30,24 @@ class Anlogic: public Device, SPIInterface {
 		 * \brief protect SPI flash blocks
 		 */
 		bool protect_flash(uint32_t len) override {
-			return SPIInterface::protect_flash(len, _verbose);
+			return SPIInterface::protect_flash(len);
 		}
 
 		/*!
 		 * \brief protect SPI flash blocks
 		 */
 		bool unprotect_flash() override {
-			return SPIInterface::unprotect_flash(_verbose);
+			return SPIInterface::unprotect_flash();
+		}
+
+		/*!
+		 * \brief dump len byte from base_addr from SPI flash
+		 * \param[in] base_addr: start offset
+		 * \param[in] len: dump len
+		 * \return false if something wrong
+		 */
+		virtual bool dumpFlash(uint32_t base_addr, uint32_t len) override {
+			return SPIInterface::dump(base_addr, len);
 		}
 
 		int spi_put(uint8_t cmd, uint8_t *tx, uint8_t *rx,

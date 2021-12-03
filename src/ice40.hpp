@@ -21,8 +21,7 @@ class Ice40: public Device, SPIInterface {
 		~Ice40();
 
 		void program(unsigned int offset, bool unprotect_flash) override;
-		bool dumpFlash(const std::string &filename,
-			uint32_t base_addr, uint32_t len);
+		bool dumpFlash(uint32_t base_addr, uint32_t len);
 		bool protect_flash(uint32_t len) override;
 		bool unprotect_flash() override;
 		/* not supported in SPI Active mode */

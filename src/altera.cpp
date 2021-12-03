@@ -238,8 +238,7 @@ void Altera::program(unsigned int offset, bool unprotect_flash)
 	}
 }
 
-bool Altera::dumpFlash(const std::string &filename, uint32_t base_addr,
-		uint32_t len)
+bool Altera::dumpFlash(uint32_t base_addr, uint32_t len)
 {
 	int ret = true;
 	/* try to load spiOverJtag bridge
@@ -251,7 +250,7 @@ bool Altera::dumpFlash(const std::string &filename, uint32_t base_addr,
 	}
 
 	EPCQ epcq(this, false, 0);
-	ret = epcq.dump(filename, base_addr, len, 256);
+	ret = epcq.dump(_filename, base_addr, len, 256);
 
 	reset();
 

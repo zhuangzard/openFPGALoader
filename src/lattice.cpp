@@ -139,6 +139,7 @@ using namespace std;
 Lattice::Lattice(Jtag *jtag, const string filename, const string &file_type,
 	Device::prog_type_t prg_type, std::string flash_sector, bool verify, int8_t verbose):
 		Device(jtag, filename, file_type, verify, verbose),
+		SPIInterface(filename, verbose, 0, verify),
 		_fpga_family(UNKNOWN_FAMILY), _flash_sector(LATTICE_FLASH_UNDEFINED)
 {
 	if (prg_type == Device::RD_FLASH) {
@@ -597,18 +598,16 @@ bool Lattice::program_extFlash(unsigned int offset, bool unprotect_flash)
 			_bit = new LatticeBitParser(_filename, _verbose);
 		else
 			_bit = new RawParser(_filename, false);
+		printSuccess("DONE");
 	} catch (std::exception &e) {
 		printError("FAIL");
 		printError(e.what());
 		return false;
 	}
 
-	printSuccess("DONE");
-
-	ret = _bit->parse();
 
 	printInfo("Parse file ", false);
-	if (ret == EXIT_FAILURE) {
+	if (_bit->parse() == EXIT_FAILURE) {
 		printError("FAIL");
 		delete _bit;
 		return false;
@@ -633,7 +632,7 @@ bool Lattice::program_extFlash(unsigned int offset, bool unprotect_flash)
 	}
 
 	ret = SPIInterface::write(offset, _bit->getData(), _bit->getLength() / 8,
-			_verify, unprotect_flash, _verbose);
+			unprotect_flash);
 
 	delete _bit;
 	return ret;
@@ -701,8 +700,7 @@ void Lattice::program(unsigned int offset, bool unprotect_flash)
 		throw std::exception();
 }
 
-bool Lattice::dumpFlash(const string &filename,
-		uint32_t base_addr, uint32_t len)
+bool Lattice::dumpFlash(uint32_t base_addr, uint32_t len)
 {
 	/* enable SPI flash access */
 	prepare_flash_access();
@@ -710,7 +708,7 @@ bool Lattice::dumpFlash(const string &filename,
 	/* prepare SPI access */
 	SPIFlash flash(this, false, _verbose);
 	flash.reset();
-	flash.dump(filename, base_addr, len);
+	flash.dump(_filename, base_addr, len);
 
 	/* reload bitstream */
 	post_flash_access();
