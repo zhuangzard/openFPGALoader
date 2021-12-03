@@ -31,7 +31,9 @@ class Lattice: public Device, SPIInterface {
 		bool program_flash(unsigned int offset, bool unprotect_flash);
 		bool Verify(std::vector<std::string> data, bool unlock = false,
 				uint32_t flash_area = 0);
-		bool dumpFlash(uint32_t base_addr, uint32_t len) override;
+		bool dumpFlash(uint32_t base_addr, uint32_t len) override {
+			return SPIInterface::dump(base_addr, len);
+		}
 
 		/*!
 		 * \brief protect SPI flash blocks

@@ -700,22 +700,6 @@ void Lattice::program(unsigned int offset, bool unprotect_flash)
 		throw std::exception();
 }
 
-bool Lattice::dumpFlash(uint32_t base_addr, uint32_t len)
-{
-	/* enable SPI flash access */
-	prepare_flash_access();
-
-	/* prepare SPI access */
-	SPIFlash flash(this, false, _verbose);
-	flash.reset();
-	flash.dump(_filename, base_addr, len);
-
-	/* reload bitstream */
-	post_flash_access();
-
-	return true;
-}
-
 /* flash mode :
  */
 bool Lattice::EnableISC(uint8_t flash_mode)
