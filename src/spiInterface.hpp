@@ -18,12 +18,39 @@
 
 class SPIInterface {
  public:
+	SPIInterface();
+	SPIInterface(const std::string &filename, uint8_t verbose,
+			uint32_t rd_burst, bool verify);
 	virtual ~SPIInterface() {}
 
-	bool protect_flash(uint32_t len, bool verbose);
-	bool unprotect_flash(bool verbose);
+	bool protect_flash(uint32_t len);
+	bool unprotect_flash();
+	/*!
+	 * \brief write len byte into flash starting at offset,
+	 *        optionnally verify after write and unprotect
+	 *        blocks if required and allowed
+	 * \param[in] offset: offset into flash
+	 * \param[in] data: data to write
+	 * \param[in] len: byte len to write
+	 * \param[in] verify: verify flash after write
+	 * \param[in] unprotect_flash: unprotect blocks if allowed and required
+	 * \param[in] rd_burst: read flash by rd_burst bytes
+	 * \param[in] verbose: verbose level
+	 * \return false when something fails
+	 */
 	bool write(uint32_t offset, uint8_t *data, uint32_t len,
-		bool verify, bool unprotect_flash, bool verbose);
+		bool unprotect_flash);
+	/*!
+	 * \brief read flash offset byte starting at base_addr and
+	 *        store into filename
+	 * \param[in] filename: file to store
+	 * \param[in] base_addr: offset into flash
+	 * \param[in] len: byte len to read
+	 * \param[in] rd_burst: read flash by rd_burst bytes
+	 * \param[in] verbose: verbose level
+	 * \return false when something fails
+	 */
+	bool dump(uint32_t base_addr, uint32_t len);
 
 	/*!
 	 * \brief send a command, followed by len byte.
@@ -66,6 +93,12 @@ class SPIInterface {
 	 * \brief end of SPI flash access
 	 */
 	virtual bool post_flash_access() {return false;}
+
+	uint8_t _spif_verbose;
+	uint32_t _spif_rd_burst;
+	bool _spif_verify;
+ private:
+	std::string _spif_filename;
 
 };
 #endif  // SRC_SPIINTERFACE_HPP_
