@@ -35,7 +35,6 @@ bool SPIInterface::protect_flash(uint32_t len)
 	/* spi flash access */
 	try {
 		SPIFlash flash(this, false, _spif_verbose);
-		flash.reset();
 
 		/* configure flash protection */
 		ret = flash.enable_protection(len) != 0;
@@ -67,7 +66,6 @@ bool SPIInterface::unprotect_flash()
 	/* spi flash access */
 	try {
 		SPIFlash flash(this, false, _spif_verbose);
-		flash.reset();
 
 		/* configure flash protection */
 		ret = flash.disable_protection() != 0;
