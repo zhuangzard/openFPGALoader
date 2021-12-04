@@ -13,7 +13,8 @@
 
 typedef enum {
 	STATR = 0, /* status register */
-	FUNCR = 1  /* function register */
+	FUNCR = 1, /* function register */
+	CONFR = 2  /* configuration register */
 } tb_loc_t;
 
 typedef struct {
@@ -32,6 +33,19 @@ typedef struct {
 } flash_t;
 
 static std::map <uint32_t, flash_t> flash_list = {
+	{0x010216, {
+		.manufacturer = "spansion",
+		.model = "S25FL064P / EPCS64",
+		.nr_sector = 128,
+		.sector_erase = true,
+		.subsector_erase = true,
+		.has_extended = true,
+		.tb_otp = false,
+		.tb_offset = (1 << 5),
+		.tb_register = CONFR,
+		.bp_len = 3,
+		.bp_offset = {(1 << 2), (1 << 3), (1 << 4), 0}}
+	},
 	{0x0020ba16, {
 		.manufacturer = "micron",
 		.model = "N25Q32",
@@ -109,6 +123,19 @@ static std::map <uint32_t, flash_t> flash_list = {
 		.tb_register = FUNCR,
 		.bp_len = 4,
 		.bp_offset = {(1 << 2), (1 << 3), (1 << 4), (1 << 5)}}
+	},
+	{0xef4015, {
+		.manufacturer = "Winbond",
+		.model = "W25Q16",
+		.nr_sector = 32,
+		.sector_erase = true,
+		.subsector_erase = true,
+		.has_extended = false,
+		.tb_otp = false,
+		.tb_offset = (1 << 5),
+		.tb_register = STATR,
+		.bp_len = 3,
+		.bp_offset = {(1 << 2), (1 << 3), (1 << 4), 0}}
 	},
 	{0xef4016, {
 		.manufacturer = "Winbond",
