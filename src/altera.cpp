@@ -27,6 +27,7 @@ Altera::Altera(Jtag *jtag, const std::string &filename,
 	const std::string &file_type, Device::prog_type_t prg_type,
 	const std::string &device_package, bool verify, int8_t verbose):
 	Device(jtag, filename, file_type, verify, verbose), _svf(_jtag, _verbose),
+	SPIInterface(filename, verbose, 256, verify),
 	_device_package(device_package),
 	_vir_addr(0x1000), _vir_length(14)
 {
@@ -197,14 +198,6 @@ void Altera::program(unsigned int offset, bool unprotect_flash)
 			programMem(_bit);
 		}
 	} else if (_mode == Device::SPI_MODE) {
-		/* try to load spiOverJtag bridge
-		 * to have an access to SPI flash
-		 */
-		if (!load_bridge()) {
-			printError("Fail to load bridge");
-			return;
-		}
-
 		// reverse only bitstream raw binaries data no
 		bool reverseOrder = false;
 		if (_file_extension == "rbf" || _file_extension == "rpd")
@@ -224,75 +217,9 @@ void Altera::program(unsigned int offset, bool unprotect_flash)
 			throw std::runtime_error(e.what());
 		}
 
-		EPCQ epcq(this, unprotect_flash, 0);
-		epcq.reset();
-		epcq.read_id();
-		epcq.display_status_reg();
-
-		if (epcq.erase_and_prog(offset, data, length) != 0)
+		if (!SPIInterface::write(offset, data, length, unprotect_flash))
 			throw std::runtime_error("Fail to write data");
-
-		if (_verify)
-			epcq.verify(offset, data, length, 256);
-		reset();
 	}
-}
-
-bool Altera::dumpFlash(uint32_t base_addr, uint32_t len)
-{
-	int ret = true;
-	/* try to load spiOverJtag bridge
-	 * to have an access to SPI flash
-	 */
-	if (!load_bridge()) {
-		printError("Fail to load bridge");
-		return false;
-	}
-
-	EPCQ epcq(this, false, 0);
-	ret = epcq.dump(_filename, base_addr, len, 256);
-
-	reset();
-
-	return ret;
-}
-
-bool Altera::protect_flash(uint32_t len)
-{
-	/* try to load spiOverJtag bridge
-	 * to have an access to SPI flash
-	 */
-	if (!load_bridge()) {
-		printError("Fail to load bridge");
-		return false;
-	}
-
-	EPCQ epcq(this, false, _verbose);
-	epcq.read_status_reg();
-	epcq.enable_protection(len);
-
-	reset();
-
-	return true;
-}
-
-bool Altera::unprotect_flash()
-{
-	/* try to load spiOverJtag bridge
-	 * to have an access to SPI flash
-	 */
-	if (!load_bridge()) {
-		printError("Fail to load bridge");
-		return false;
-	}
-
-	EPCQ epcq(this, false, _verbose);
-	epcq.read_status_reg();
-	epcq.disable_protection();
-
-	reset();
-
-	return true;
 }
 
 int Altera::idCode()

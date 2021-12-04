@@ -33,7 +33,9 @@ class Altera: public Device, SPIInterface {
 		 * \param[in] len: length (in Byte)
 		 * \return false if read fails or filename can't be open, true otherwise
 		 */
-		bool dumpFlash(uint32_t base_addr, uint32_t len) override;
+		bool dumpFlash(uint32_t base_addr, uint32_t len) override {
+			return SPIInterface::dump(base_addr, len);
+		}
 
 		int idCode() override;
 		void reset() override;
@@ -45,17 +47,25 @@ class Altera: public Device, SPIInterface {
 		/*!
 		 * \brief protect SPI flash blocks
 		 */
-		bool protect_flash(uint32_t len) override;
+		bool protect_flash(uint32_t len) override {
+			return SPIInterface::protect_flash(len);
+		}
 		/*!
 		 * \brief unprotect SPI flash blocks
 		 */
-		bool unprotect_flash() override;
+		bool unprotect_flash() override {
+			return SPIInterface::unprotect_flash();
+		}
 
 		int spi_put(uint8_t cmd, uint8_t *tx, uint8_t *rx,
 				uint32_t len) override;
 		int spi_put(uint8_t *tx, uint8_t *rx, uint32_t len) override;
 		int spi_wait(uint8_t cmd, uint8_t mask, uint8_t cond,
 				uint32_t timeout, bool verbose = false) override;
+
+	protected:
+		bool prepare_flash_access() override {return load_bridge();}
+		bool post_flash_access() override {reset(); return true;}
 
 	private:
 		/*!
