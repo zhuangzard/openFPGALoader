@@ -28,6 +28,8 @@
 #define FLASH_WREN     0x06
 /* sector (4Kb) erase */
 #define FLASH_SE       0x20
+/* read configuration register */
+#define FLASH_RDCR     0x35
 /* write function register (at least ISSI) */
 #define FLASH_WRFR     0x42
 /* read function register (at least ISSI) */
@@ -431,15 +433,27 @@ void SPIFlash::display_status_reg(uint8_t reg)
 	printf("SRWD : %d\n", ((reg >> 7) & 0x01));
 
 	/* function register */
-	if ((_jedec_id >> 8) == 0x9d60) {
-		_spi->spi_put(FLASH_RDFR, NULL, &reg, 1);
-		printf("\nFunction Register\n");
-		printf("RDFR : %02x\n", reg);
-		printf("RES  : %d\n", ((reg >> 0) & 0x01));
-		printf("TBS  : %d\n", ((reg >> 1) & 0x01));
-		printf("PSUS : %d\n", ((reg >> 2) & 0x01));
-		printf("ESUS : %d\n", ((reg >> 3) & 0x01));
-		printf("IRL  : %x\n", ((reg >> 4) & 0x0f));
+	switch (_jedec_id >> 8) {
+		case 0x9d60:
+			_spi->spi_put(FLASH_RDFR, NULL, &reg, 1);
+			printf("\nFunction Register\n");
+			printf("RDFR : %02x\n", reg);
+			printf("RES  : %d\n", ((reg >> 0) & 0x01));
+			printf("TBS  : %d\n", ((reg >> 1) & 0x01));
+			printf("PSUS : %d\n", ((reg >> 2) & 0x01));
+			printf("ESUS : %d\n", ((reg >> 3) & 0x01));
+			printf("IRL  : %x\n", ((reg >> 4) & 0x0f));
+			break;
+		case 0x010216:
+			_spi->spi_put(FLASH_RDCR, NULL, &reg, 1);
+			printf("\nConfiguration Register\n");
+			printf("RDCR   : %02x\n", reg);
+			printf("FREEZE : %d\n", ((reg >> 0) & 0x01));
+			printf("QUAD   : %d\n", ((reg >> 1) & 0x01));
+			printf("TBPARM : %d\n", ((reg >> 2) & 0x01));
+			printf("BPNV   : %d\n", ((reg >> 3) & 0x01));
+			printf("TBPROT : %d\n", ((reg >> 5) & 0x01));
+			break;
 	}
 }
 
@@ -575,6 +589,9 @@ int SPIFlash::enable_protection(uint32_t length)
 		case FUNCR:  // function register
 			_spi->spi_put(FLASH_RDFR, NULL, &status, 1);
 			break;
+		case CONFR:  // function register
+			_spi->spi_put(FLASH_RDCR, NULL, &status, 1);
+			break;
 		default:  // unknown
 			printError("Unknown Top/Bottom register");
 			return -1;
@@ -585,6 +602,27 @@ int SPIFlash::enable_protection(uint32_t length)
 			printError("TOP/BOTTOM bit is OTP: can't write this bit");
 			return -1;
 		}
+	}
+
+	/* spansion devices have only one instruction to write
+	 * both status register and configuration register
+	 * we have to write 2 bytes:
+	 * 0: status register
+	 * 1: configuration register
+	 */
+	if ((_jedec_id >> 8) == 0x010216) {
+		int ret = 0;
+		uint8_t status;
+		_spi->spi_put(FLASH_RDCR, NULL, &status, 1);
+		uint8_t cfg[2] = {bp, status};
+		cfg[1] |= _flash_model->tb_offset;
+		_spi->spi_put(FLASH_WRSR, cfg, NULL, 2);
+		if (_spi->spi_wait(FLASH_RDSR, 0x03, 0, 1000) < 0) {
+			printError("Error: enable protection failed\n");
+			return -1;
+		}
+
+		return ret;
 	}
 
 	/* if TB is located in status register -> set to 1 */
