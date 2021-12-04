@@ -26,9 +26,9 @@
 Altera::Altera(Jtag *jtag, const std::string &filename,
 	const std::string &file_type, Device::prog_type_t prg_type,
 	const std::string &device_package, bool verify, int8_t verbose):
-	Device(jtag, filename, file_type, verify, verbose), _svf(_jtag, _verbose),
+	Device(jtag, filename, file_type, verify, verbose),
 	SPIInterface(filename, verbose, 256, verify),
-	_device_package(device_package),
+	_svf(_jtag, _verbose), _device_package(device_package),
 	_vir_addr(0x1000), _vir_length(14)
 {
 	if (prg_type == Device::RD_FLASH) {
