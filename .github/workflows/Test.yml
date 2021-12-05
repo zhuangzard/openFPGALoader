@@ -8,10 +8,34 @@ on:
 jobs:
 
 
+  doc:
+    runs-on: ubuntu-latest
+    name: '📓 Docs'
+    steps:
+
+    - name: '🧰 Checkout'
+      uses: actions/checkout@v2
+
+    - name: '📓 BuildTheDocs (BTD)'
+      uses: buildthedocs/btd@v0
+      with:
+        token: ${{ github.token }}
+        skip-deploy: ${{ github.event_name == 'pull_request' }}
+
+    - name: '🧹 Clean HTML build'
+      if: ${{ github.event_name != 'pull_request' }}
+      run: sudo rm -rf doc/_build/html/.git
+
+    - name: '📤 Upload artifact: HTML'
+      uses: actions/upload-artifact@v2
+      with:
+        name: openFPGALoader-Documentation
+        path: doc/_build/html
+
+
   lin-build:
     strategy:
       fail-fast: false
-      max-parallel: 4
       matrix:
         os:
         - 18
@@ -72,7 +96,6 @@ jobs:
     needs: lin-build
     strategy:
       fail-fast: false
-      max-parallel: 4
       matrix:
         os:
         - 18
@@ -104,16 +127,32 @@ jobs:
         openFPGALoader --detect || true
 
 
+  win-jobs:
+    name: ⬜ Generate list of MSYS2 jobs
+    runs-on: ubuntu-latest
+    outputs:
+      jobs: ${{ steps.jobs.outputs.jobs }}
+    steps:
+    - name: Generate list of jobs
+      shell: python
+      id: jobs
+      run: |
+        jobs = [
+          { 'icon': '⬛', 'sys': 'mingw32' },
+          { 'icon': '🟦', 'sys': 'mingw64' },
+          { 'icon': '🟨', 'sys': 'ucrt64'  }, # Experimental!
+          { 'icon': '🟧', 'sys': 'clang64' }, # Experimental!
+        ]
+        print(f"::set-output name=jobs::{jobs!s}")
+
+
   win-makepkg:
     runs-on: windows-latest
+    needs: win-jobs
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - { icon: '⬛', sys: mingw32, env: i686 }
-          - { icon: '🟦', sys: mingw64, env: x86_64 }
-          - { icon: '🟨', sys: ucrt64,  env: ucrt-x86_64 }  # Experimental!
-          - { icon: '🟧', sys: clang64, env: clang-x86_64 } # Experimental!
+        include: ${{ fromJson(needs.win-jobs.outputs.jobs) }}
     name: '🚧${{ matrix.icon }} ${{ matrix.sys }} | makepkg'
     defaults:
       run:
@@ -140,7 +179,7 @@ jobs:
           git
           base-devel
           tree
-          mingw-w64-${{ matrix.env }}-toolchain
+        pacboy: toolchain:p
 
     - name: '🚧 Build package'
       run: |
@@ -151,7 +190,7 @@ jobs:
       uses: actions/upload-artifact@v2
       with:
         name: ${{ matrix.sys }}-openFPGALoader
-        path: scripts/msys2/*${{ matrix.env }}*.zst
+        path: scripts/msys2/*.zst
 
     - name: '🔍 Show package content'
       run: |
@@ -162,16 +201,14 @@ jobs:
 
 
   win-test:
-    needs: win-makepkg
+    needs:
+      - win-jobs
+      - win-makepkg
     runs-on: windows-latest
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - { icon: '⬛', sys: mingw32, env: i686 }
-          - { icon: '🟦', sys: mingw64, env: x86_64 }
-          - { icon: '🟨', sys: ucrt64,  env: ucrt-x86_64 }  # Experimental!
-          - { icon: '🟧', sys: clang64, env: clang-x86_64 } # Experimental!
+        include: ${{ fromJson(needs.win-jobs.outputs.jobs) }}
     name: '🚦${{ matrix.icon }} ${{ matrix.sys }} | test'
     defaults:
       run:
@@ -209,6 +246,12 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         path: artifact
+
+    - name: '✉️ Package Documentation'
+      run: |
+        cd artifact
+        tar cvzf openFPGALoader-Documentation.tar.gz openFPGALoader-Documentation
+        rm -rf openFPGALoader-Documentation
 
     # Tagged: create a pre-release or a release (semver)
     # Untagged: update the assets of pre-release 'nightly'
