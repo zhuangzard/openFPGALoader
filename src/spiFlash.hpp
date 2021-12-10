@@ -6,6 +6,7 @@
 #ifndef SRC_SPIFLASH_HPP_
 #define SRC_SPIFLASH_HPP_
 
+#include <map>
 #include <string>
 
 #include "spiInterface.hpp"
@@ -101,11 +102,21 @@ class SPIFlash {
 
 	protected:
 		/*!
+		 * \brief retrieve TB (Top/Bottom) bit from one register
+		 *        (depends on flash)
+		 * \return -1 if unknown register, 1 or 0 otherwise
+		 */
+		int8_t get_tb();
+
+	public:
+		/*!
 		 * \brief convert block protect to len in byte
 		 * \param[in] bp: block protection
 		 * \return protect area in byte
 		 */
-		uint32_t bp_to_len(uint8_t bp);
+		std::map<std::string, uint32_t> bp_to_len(uint8_t bp, uint8_t tb);
+
+	protected:
 		/*!
 		 * \brief convert len (in byte) to corresponding block protect
 		 * \param[in] len: len in byte

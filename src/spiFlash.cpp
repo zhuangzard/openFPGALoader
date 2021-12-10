@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <cmath>
+#include <map>
 #include <iostream>
 
 #include "progressBar.hpp"
@@ -240,16 +241,16 @@ int SPIFlash::erase_and_prog(int base_addr, uint8_t *data, int len)
 {
 	if (_jedec_id == 0)
 		read_id();
-	bool must_relock = false; // used to relock after write;
+	bool must_relock = false;  // used to relock after write;
 
 	/* microchip SST26VF032B have global lock set
 	 * at powerup. global unlock must be send inconditionally
 	 * with or without block protection
 	 */
-	if (_jedec_id == 0xbf2642bf) { // microchip SST26VF032B
+	if (_jedec_id == 0xbf2642bf) {  // microchip SST26VF032B
 		if (!global_unlock())
 			return -1;
-	} 
+	}
 	/* check Block Protect Bits (hide WIP/WEN bits) */
 	uint8_t status = read_status_reg() & ~0x03;
 	if (_verbose > 0)
@@ -262,11 +263,25 @@ int SPIFlash::erase_and_prog(int base_addr, uint8_t *data, int len)
 			return -1;
 		}
 		/* compute protected area */
-		uint32_t lock_len = bp_to_len(status);
-		printf("%08x %08x %02x\n", base_addr, lock_len, status);
-		/* if overlap */
-		if ((uint32_t)base_addr < lock_len)
-			must_relock = true;
+		int8_t tb = get_tb();
+		if (tb == -1)
+			return -1;
+		std::map<std::string, uint32_t> lock_len = bp_to_len(status, tb);
+		printf("%08x %08x %08x %02x\n", base_addr,
+				lock_len["start"], lock_len["end"], status);
+
+		/* if some blocks are locked */
+		if (lock_len["start"] != 0 || lock_len["end"] != 0) {
+			/* if overlap */
+			if (tb == 1) {  // bottom blocks are protected
+							// check if start is in protected blocks
+				if ((uint32_t)base_addr <= lock_len["end"])
+					must_relock = true;
+			} else {  // top blocks
+				if ((uint32_t)(base_addr + len) >= lock_len["start"])
+					must_relock = true;
+			}
+		}
 	} else {  // unknown chip: basic test
 		printWarn("flash chip unknown: use basic protection detection");
 		if ((status & 0x1c) != 0)
@@ -286,6 +301,7 @@ int SPIFlash::erase_and_prog(int base_addr, uint8_t *data, int len)
 		}
 	}
 
+	/* Now we can erase sector and write new data */
 	ProgressBar progress("Writing", len, 50, _verbose < 0);
 	if (sectors_erase(base_addr, len) == -1)
 		return -1;
@@ -300,7 +316,7 @@ int SPIFlash::erase_and_prog(int base_addr, uint8_t *data, int len)
 	}
 	progress.done();
 
-	/* TODO: relock blocks */
+	/* and if required: relock blocks */
 	if (must_relock) {
 		enable_protection(status);
 		if (_verbose > 0)
@@ -580,25 +596,9 @@ int SPIFlash::enable_protection(uint32_t length)
 	 * current (temporary) policy: do nothing
 	 */
 	if (_flash_model->tb_otp) {
-		uint8_t status;
-		/* read TB: not always in status register */
-		switch (_flash_model->tb_register) {
-		case STATR:  // status register
-			status = read_status_reg();
-			break;
-		case FUNCR:  // function register
-			_spi->spi_put(FLASH_RDFR, NULL, &status, 1);
-			break;
-		case CONFR:  // function register
-			_spi->spi_put(FLASH_RDCR, NULL, &status, 1);
-			break;
-		default:  // unknown
-			printError("Unknown Top/Bottom register");
-			return -1;
-		}
-
+		uint8_t tb = get_tb();
 		/* check if TB is set */
-		if (!(status & _flash_model->tb_otp)) {
+		if (tb == 0) {
 			printError("TOP/BOTTOM bit is OTP: can't write this bit");
 			return -1;
 		}
@@ -664,12 +664,38 @@ int SPIFlash::enable_protection(uint32_t length)
 	return ret;
 }
 
-/* convert bp area (status register) to len in byte */
-uint32_t SPIFlash::bp_to_len(uint8_t bp)
+/* retrieve TB (Top/Bottom) bit from register */
+int8_t SPIFlash::get_tb()
 {
+	uint8_t status;
+	/* read TB: not always in status register */
+	switch (_flash_model->tb_register) {
+	case STATR:  // status register
+		status = read_status_reg();
+		break;
+	case FUNCR:  // function register
+		_spi->spi_put(FLASH_RDFR, NULL, &status, 1);
+		break;
+	case CONFR:  // function register
+		_spi->spi_put(FLASH_RDCR, NULL, &status, 1);
+		break;
+	default:  // unknown
+		printError("Unknown Top/Bottom register");
+		return -1;
+	}
+
+	return (status & _flash_model->tb_offset) ? 1 : 0;
+}
+
+/* convert bp area (status register) to len in byte */
+std::map<std::string, uint32_t> SPIFlash::bp_to_len(uint8_t bp, uint8_t tb)
+{
+	std::map<std::string, uint32_t> protect_area;
+	protect_area["start"] = 0;
+	protect_area["end"] = 0;
 	/* 0 -> no block protected */
 	if (bp == 0)
-		return 0;
+		return protect_area;
 
 	/* reconstruct code based on each BPx bit */
 	uint8_t tmp = 0;
@@ -678,8 +704,17 @@ uint32_t SPIFlash::bp_to_len(uint8_t bp)
 			tmp |= (1 << i);
 	/* bp code is 2^(bp-1) blocks */
 	uint16_t nr_sectors = (1 << (tmp-1));
+	printf("nr_sectors : %d\n", nr_sectors);
+	uint32_t len = nr_sectors * 0x10000;
+	if (tb == 1) {
+		protect_area["start"] = 0;
+		protect_area["end"] = len - 1;
+	} else {
+		protect_area["end"] = (_flash_model->nr_sector * 0x10000) - 1;
+		protect_area["start"] = (protect_area["end"] + 1) - len;
+	}
 
-	return nr_sectors * 0x10000;
+	return protect_area;
 }
 
 /* convert len (in byte) to bp (block protection) */
