@@ -286,7 +286,7 @@ int SPIFlash::erase_and_prog(int base_addr, uint8_t *data, int len)
 		 * block protection is always in top mode regardless of
 		 * the TB bit: if write is not at offset 0 -> force unlock
 		 */
-		if ((_jedec_id >> 8) == 0x9d6016 && base_addr != 0) {
+		if ((_jedec_id >> 8) == 0x9d6016 && tb == 1 && base_addr != 0) {
 			_unprotect = true;
 			must_relock = true;
 		}
