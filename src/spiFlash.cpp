@@ -282,6 +282,14 @@ int SPIFlash::erase_and_prog(int base_addr, uint8_t *data, int len)
 					must_relock = true;
 			}
 		}
+		/* ISSI IS25LP032 seems have a bug:
+		 * block protection is always in top mode regardless of
+		 * the TB bit: if write is not at offset 0 -> force unlock
+		 */
+		if ((_jedec_id >> 8) == 0x9d6016 && base_addr != 0) {
+			_unprotect = true;
+			must_relock = true;
+		}
 	} else {  // unknown chip: basic test
 		printWarn("flash chip unknown: use basic protection detection");
 		if ((status & 0x1c) != 0)
