@@ -19,6 +19,7 @@ typedef struct {
 /* Highest nibble (version) must always be set to 0 */
 static std::map <int, fpga_model> fpga_list = {
 	{0x0a014c35, {"anlogic", "eagle s20", "EG4S20BG256", 8}},
+	{0x00004c37, {"anlogic", "elf2", "EF2M45", 8}},
 
 	{0x0362D093, {"xilinx", "artix a7 35t", "xc7a35", 6}},
 	{0x0362c093, {"xilinx", "artix a7 50t",  "xc7a50t", 6}},
@@ -60,10 +61,13 @@ static std::map <int, fpga_model> fpga_list = {
 	{0x02d020dd, {"altera", "cyclone V Soc", "5CSEBA6", 10}},
 	{0x02d010dd, {"altera", "cyclone V Soc", "5CSEMA4", 10}},
 
-	{0x00000001, {"efinix", "Trion", "T4/T8",            4}},
-	{0x00210a79, {"efinix", "Trion", "T8QFP144/T13/T20", 4}},
-	{0x00220a79, {"efinix", "Trion", "T55/T85/T120",     4}},
-	{0x00240a79, {"efinix", "Trion", "T20BGA324/T35",    4}},
+	{0x00000001, {"efinix", "Trion",    "T4/T8",            4}},
+	{0x00210a79, {"efinix", "Trion",    "T8QFP144/T13/T20", 4}},
+	{0x00220a79, {"efinix", "Trion",    "T55/T85/T120",     4}},
+	{0x00240a79, {"efinix", "Trion",    "T20BGA324/T35",    4}},
+	{0x00660a79, {"efinix", "Titanium", "Ti60",             4}},
+	{0x00360a79, {"efinix", "Titanium", "Ti60ES",           4}},
+	{0x00661a79, {"efinix", "Titanium", "Ti35",             4}},
 
 	{0x010F0043, {"lattice", "CrosslinkNX", "LIFCL-17", 8}},
 	{0x010F1043, {"lattice", "CrosslinkNX", "LIFCL-40", 8}},
@@ -107,6 +111,9 @@ static std::map <int, fpga_model> fpga_list = {
 	{0x0100381B, {"Gowin", "GW1N", "GW1N-4", 8}},
 	{0x0300181b, {"Gowin", "GW1NS", "GW1NS-2C", 8}},
 	{0x0100981b, {"Gowin", "GW1NSR", "GW1NSR-4C", 8}},
+
+	/* keep highest nibble to prevent confusion with Efinix T4/T8 IDCODE */
+	{0x20000001, {"colognechip", "GateMate Series", "GM1Ax", 6}},
 };
 
 /* device potentially in JTAG chain but not handled */

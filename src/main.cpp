@@ -16,6 +16,7 @@
 #include "anlogic.hpp"
 #include "board.hpp"
 #include "cable.hpp"
+#include "colognechip.hpp"
 #include "device.hpp"
 #include "dfu.hpp"
 #include "display.hpp"
@@ -217,6 +218,10 @@ int main(int argc, char **argv)
 			} else if (board->manufacturer == "lattice") {
 				target = new Ice40(spi, args.bit_file, args.file_type,
 					board->reset_pin, board->done_pin, args.verify, args.verbose);
+			} else if (board->manufacturer == "colognechip") {
+				CologneChip target(spi, args.bit_file, args.file_type, args.prg_type,
+					board->reset_pin, board->done_pin, DBUS6, board->oe_pin,
+					args.verify, args.verbose);
 			}
 			if (args.prg_type == Device::RD_FLASH) {
 				if (args.file_size == 0) {
@@ -458,6 +463,9 @@ int main(int argc, char **argv)
 		} else if (fab == "lattice") {
 			fpga = new Lattice(jtag, args.bit_file, args.file_type,
 				args.prg_type, args.flash_sector, args.verify, args.verbose);
+		} else if (fab == "colognechip") {
+			fpga = new CologneChip(jtag, args.bit_file, args.file_type,
+				args.prg_type, args.board, args.cable, args.verify, args.verbose);
 		} else {
 			printError("Error: manufacturer " + fab + " not supported");
 			delete(jtag);

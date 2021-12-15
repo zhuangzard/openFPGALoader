@@ -21,6 +21,9 @@ Boards
                    arty `Digilent Analog Discovery 2 <https://reference.digilentinc.com/test-and-measurement/analog-discovery-2/start>`__                                 Spartan6 xc6slx25             OK        NT
                    arty `Digilent Digital Discovery <https://reference.digilentinc.com/test-and-measurement/digital-discovery/start>`__                                   Spartan6 xc6slx25             OK        NT
                  basys3 `Digilent Basys3 <https://reference.digilentinc.com/reference/programmable-logic/basys-3/start>`__                                                Artix xc7a35tcpg236           OK        OK
+      gatemate_evb_jtag `Cologne Chip GateMate FPGA Evaluation Board (JTAG mode) <https://colognechip.com/programmable-logic/gatemate/>`__                                 Cologne Chip GateMate Series  OK        OK
+       gatemate_evb_spi `Cologne Chip GateMate FPGA Evaluation Board (SPI mode) <https://colognechip.com/programmable-logic/gatemate/>`__                                  Cologne Chip GateMate Series  OK        OK
+       gatemate_pgm_spi `Cologne Chip GateMate FPGA Programmer (SPI mode) <https://colognechip.com/programmable-logic/gatemate/>`__                                       Cologne Chip GateMate Series  OK        OK
              colorlight `Colorlight 5A-75B (version 7) <https://fr.aliexpress.com/item/32281130824.html>`__                                                               ECP5 LFE5U-25F-6BG256C        OK        OK
           colorlight_i5 `Colorlight I5 <https://www.colorlight-led.com/product/colorlight-i5-led-display-receiver-card.html>`__                                           ECP5 LFE5U-25F-6BG381C        OK        OK
         crosslinknx_evn `Lattice CrossLink-NX Evaluation Board <https://www.latticesemi.com/en/Products/DevelopmentBoardsAndKits/CrossLink-NXEvaluationBoard>`__          Nexus LIFCL-40                OK        OK
@@ -60,6 +63,7 @@ Boards
                    xtrx `FairWaves XTRXPro <https://www.crowdsupply.com/fairwaves/xtrx>`__                                                                                Artix xc7a50tcpg236           OK        OK
              xyloni_spi `Efinix Xyloni <https://www.efinixinc.com/products-devkits-xyloni.html>`__                                                                        Trion T8F81                   NA        AS
   trion_t120_bga576_spi `Efinix Trion T120 BGA576 Dev Kit <https://www.efinixinc.com/products-devkits-triont120bga576.html>`__                                            Trion T120BGA576              NA        AS
+    trion_ti60_f225_spi `Efinix Titanium F225 Dev Kit <https://www.efinixinc.com/products-devkits-titaniumti60f225.html>`__                                               Titanium Ti60F225             NA        AS
                    xmf3 `PLDkit XMF3 <https://pldkit.com/xilinx/xmf3>`__                                                                                                  Xilinx xc3s200ft256, xcf01s   OK        OK
                zedboard `Avnet ZedBoard <https://www.avnet.com/wps/portal/us/products/avnet-boards/avnet-board-families/zedboard/>`__                                     zynq7000 xc7z020clg484        OK        NA
 ======================= ================================================================================================================================================= ============================= ========= ========
