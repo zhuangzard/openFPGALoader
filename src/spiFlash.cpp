@@ -135,8 +135,8 @@ int SPIFlash::sectors_erase(int base_addr, int size)
 			break;
 		}
 
-		/* if block erase + addr end out of end_addr -> use sector_erase */
-		if (addr + 0x10000 > end_addr) {
+		/* if block erase + addr end out of end_addr -> use sector_erase (4Kb) */
+		if (addr + 0x10000 > end_addr && _flash_model && _flash_model->subsector_erase) {
 			step = 0x1000;
 			ret = sector_erase(addr);
 		} else {
