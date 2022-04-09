@@ -38,6 +38,7 @@ class FtdiJtagMPSSE : public JtagInterface, public FTDIpp_MPSSE {
 	/* TDI */
 	int writeTDI(uint8_t *tx, uint8_t *rx, uint32_t len, bool end) override;
 
+    int writeTMSTDI(uint8_t *tms, uint8_t *tdi, uint8_t *tdo, uint32_t len) override;
 	/*!
 	 * \brief return internal buffer size (in byte).
 	 * \return _buffer_size -3 for mpsse cmd + size, -1 for potential SEND_IMMEDIATE
@@ -50,6 +51,7 @@ class FtdiJtagMPSSE : public JtagInterface, public FTDIpp_MPSSE {
 
  private:
 	void init_internal(const FTDIpp_MPSSE::mpsse_bit_config &cable);
+    void showBuf(const char *name, const unsigned char *buf, int numBytes);
 	/*!
 	 * \brief configure read and write edge (pos or neg), with freq < 15MHz
 	 *        neg is used for write and pos to sample. with freq >= 15MHz

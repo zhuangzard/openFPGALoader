@@ -339,3 +339,167 @@ int FtdiJtagMPSSE::writeTDI(uint8_t *tdi, uint8_t *tdo, uint32_t len, bool last)
 
 	return 0;
 }
+void FtdiJtagMPSSE::showBuf(const char *name, const unsigned char *buf, int numBytes)
+{
+    int i;
+    printf("%s%4d:", name, numBytes);
+    if (numBytes > 40) numBytes = 40;
+    for (i = 0 ; i < numBytes ; i++) printf(" %02X", buf[i]);
+    printf("\n");
+}
+
+
+int FtdiJtagMPSSE::writeTMSTDI(uint8_t *tms, uint8_t *tdi, uint8_t *tdo, uint32_t len)
+{
+    int tx_buff_size = mpsse_get_buffer_size();
+    display("%s %d %d\n", __func__, len, (len/8)+1);
+
+    if (len == 0)
+        return 0;
+
+    int xfer = len;
+    int offset = 0;
+
+    uint8_t buf[3]= {0,0, 0};
+    /* TMS is first 0-6 and TDI is the 7th bit
+	 * buf[2] set the to 0x80 which is 1000 0000 which keep the TDI always to 1
+	 * When send TMS we always use MPSSE_BITMOTE, due to we only could send 6bit each time.
+     */
+
+    int txfer = tx_buff_size - 3;
+    unsigned char tdiBuf[txfer];
+    unsigned char tdoBuf[txfer];
+    unsigned char *rx_ptr = (unsigned char *)tdo;
+    unsigned char *tx_ptr = (unsigned char *)tdi;
+    int rxBit, rxIndex;
+    int tdoBit = 0x01, tdoIndex = 0;
+    unsigned short rxBitcounts[tx_buff_size/3];
+
+    while (xfer > 0) {
+        buf[0] = static_cast<unsigned char>(MPSSE_WRITE_TMS | MPSSE_LSB | MPSSE_BITMODE |
+                _write_mode |((tdo) ? (MPSSE_DO_READ | _read_mode) : 0));
+        int rxBytesWanted = 0;
+        int rxBitcountIndex = 0;
+
+        int bit_to_send = (xfer > 6) ? 6 : xfer;
+        buf[1] = bit_to_send - 1;
+        int tdiState = (tdi[offset >> 3] & (1 << (offset & 0x07))) ? 1 : 0;
+        int tmsState = (tms[offset >> 3] & (1 << (offset & 0x07))) ? 1 : 0; //update tms
+        int itmsBit = 0;
+        do {
+            tmsState = (tms[offset >> 3] & (1 << (offset & 0x07))) ? 1 : 0; //update tms
+            buf[2] |= (tmsState
+                    << itmsBit); //offset & 0x07 = offset % 8 and tms[offset >>3] is a crazy smart way to iterate
+            itmsBit++;
+            offset++;
+            xfer -= 1;//update the xfer number
+        } while ((itmsBit < bit_to_send) && (((tdi[offset >> 3] & (1 << (offset & 0x07))) ? 1 : 0) ==
+                                             tdiState));//if the 6bit reached or TDI changed the state, go TDI sending process
+        buf[1] = itmsBit - 1; //update the read length of the TDI
+        buf[2] |= (tdiState << 7) | (tmsState << 1);//Check the state of tdi and give to TMS 7th bit
+
+        mpsse_store(buf, 3);//write into buffer
+        rxBytesWanted++;
+        rxBitcounts[rxBitcountIndex++] = itmsBit;
+
+        buf[0] = (unsigned char) (MPSSE_LSB | ((tdi) ? (MPSSE_DO_WRITE | _write_mode) : 0) |
+                                  ((tdo) ? (MPSSE_DO_READ | _read_mode) : 0));
+        int itdiBit = 0;
+        while (xfer > 0 && ((tms[offset >> 3] & (1 << (offset & 0x07))) ? 1 : 0) == tmsState) //
+        {
+            tdiState = (tdi[offset >> 3] & (1 << (offset & 0x07))) ? 1 : 0;
+            tdiBuf[itdiBit >> 3] |= (tdiState << (itdiBit & 0x07));
+            itdiBit++;
+            offset++;
+            xfer -= 1;//update the xfer number
+        }
+        if (itdiBit > 0) {
+            rxBitcounts[rxBitcountIndex++] = itdiBit;
+        }
+
+        int nb_byte = itdiBit >> 3;    // number of byte to send
+        int nb_bit = (itdiBit & 0x07); // residual bits
+
+        if(nb_bit>0){
+            rxBytesWanted += nb_byte + 1;
+        }
+        /* if only one full byte use BITMODE to reduce
+        * transaction size
+        */
+        if (nb_byte == 1 && nb_bit == 0) {
+            nb_byte = 0;
+            nb_bit = 8;
+        }
+
+        while (nb_byte != 0) {
+            int xfer_len = (nb_byte > txfer) ? txfer : nb_byte;
+            buf[1] = (((xfer_len - 1)) & 0xff);  // low
+            buf[2] = (((xfer_len - 1) >> 8) & 0xff);  // high
+            mpsse_store(buf, 3);
+            if (tdi) {
+                mpsse_store(tdiBuf, xfer_len);
+                tx_ptr += xfer_len;
+                std::memset(tdiBuf, 0, sizeof(xfer_len));//clean the buffer
+            }
+            nb_byte -= xfer_len;
+        }
+
+        unsigned char last_bit = (tdi) ? *tx_ptr : 0;
+        if (nb_bit != 0) {
+            display("%s read/write %d bit\n", __func__, nb_bit);
+            buf[0] |= MPSSE_BITMODE;
+            buf[1] = nb_bit - 1;
+            mpsse_store(buf, 2);
+            if (tdi) {
+                display("%s last_bit %x size %d\n", __func__, last_bit, nb_bit - 1);
+                mpsse_store(last_bit);
+            }
+        }
+        showBuf("Tx", _buffer, _num);
+        mpsse_write();
+        if (tdo) {
+            mpsse_read(tdoBuf, rxBytesWanted);
+            display("%s %x\n", __func__, *tdoBuf);
+        }
+
+        rxIndex = 0;
+        for (int i = 0 ; i < rxBitcountIndex ; i++) {
+            int rxBitcount = rxBitcounts[i];
+            if (rxBitcount < 8) {
+                rxBit = 0x1 << (8 - rxBitcount);
+            }
+            else {
+                rxBit = 0x01;
+            }
+            while (rxBitcount--) {
+                if (tdoBit == 0x1) {
+                    rx_ptr[tdoIndex] = 0;
+                }
+                if (tdoBuf[rxIndex] & rxBit) {
+                    rx_ptr[tdoIndex] |= tdoBit;
+                }
+                if (rxBit == 0x80) {
+                    if (rxBitcount < 8) {
+                        rxBit = 0x1 << (8 - rxBitcount);
+                    }
+                    else {
+                        rxBit = 0x01;
+                    }
+                    rxIndex++;
+                }
+                else {
+                    rxBit <<= 1;
+                }
+                if (tdoBit == 0x80) {
+                    tdoBit = 0x01;
+                    tdoIndex++;
+                }
+                else {
+                    tdoBit <<= 1;
+                }
+            }
+        }
+    }
+
+    return len;
+}

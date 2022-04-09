@@ -266,3 +266,9 @@ int FtdiJtagBitBang::write(uint8_t *tdo, int nb_bit)
 	_num = 0;
 	return ret;
 }
+
+/* TMS TDI TDO */
+int FtdiJtagBitBang::writeTMSTDI(uint8_t *tms, uint8_t *tdi, uint8_t *tdo, uint32_t len)
+{
+    return 0;
+}

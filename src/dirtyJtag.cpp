@@ -375,3 +375,9 @@ int DirtyJtag::writeTDI(uint8_t *tx, uint8_t *rx, uint32_t len, bool end)
 	}
 	return EXIT_SUCCESS;
 }
+
+/* TMS TDI TDO */
+int DirtyJtag::writeTMSTDI(uint8_t *tms, uint8_t *tdi, uint8_t *tdo, uint32_t len)
+{
+    return 0;
+}

@@ -283,6 +283,12 @@ int UsbBlaster::toggleClk(uint8_t tms, uint8_t tdi, uint32_t clk_len)
 	return clk_len;
 }
 
+/* TMS TDI TDO */
+int UsbBlaster::writeTMSTDI(uint8_t *tms, uint8_t *tdi, uint8_t *tdo, uint32_t len)
+{
+    return 0;
+}
+
 int UsbBlaster::flush()
 {
 	return write(false, 0);

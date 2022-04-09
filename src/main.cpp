@@ -30,6 +30,7 @@
 #include "spiFlash.hpp"
 #include "rawParser.hpp"
 #include "xilinx.hpp"
+#include "xvc.hpp"
 
 #define DEFAULT_FREQ 	6000000
 
@@ -67,6 +68,9 @@ struct arguments {
 	uint32_t protect_flash;
 	bool unprotect_flash;
 	string flash_sector;
+	bool xvc;
+	int port;
+	string interface;
 };
 
 int parse_opt(int argc, char **argv, struct arguments *args, jtag_pins_conf_t *pins_config);
@@ -82,7 +86,8 @@ int main(int argc, char **argv)
 	/* command line args. */
 	struct arguments args = {0, false, false, false, 0, "", "", "-", "", -1,
 			0, false, "-", false, false, false, false, Device::PRG_NONE, false,
-			false, false, "", "", "", -1, 0, false, -1, 0, 0, 0, false, ""};
+			false, false, "", "", "", -1, 0, false, -1, 0, 0, 0, false, "",
+			false, 3721, "-"};
 	/* parse arguments */
 	try {
 		if (parse_opt(argc, argv, &args, &pins_config))
@@ -363,6 +368,7 @@ int main(int argc, char **argv)
 
 	/* jtag base */
 
+
 	/* if no instruction from user -> select load */
 	if (args.prg_type == Device::PRG_NONE)
 		args.prg_type = Device::WR_SRAM;
@@ -445,7 +451,7 @@ int main(int argc, char **argv)
 	}
 
 	jtag->device_select(index);
-
+    cout << "the selected indext is: "<< index << endl;
 	/* check if selected device is supported
 	 * mainly used in conjunction with --index-chain
 	 */
@@ -456,6 +462,21 @@ int main(int argc, char **argv)
 	}
 
 	string fab = fpga_list[idcode].manufacturer;
+
+    /***** Create the XVC Socket********/
+    if(args.xvc){
+        //setup the port for XVC
+        if (args.port != 3721 && args.xvc == true) { /* if no board and no cable */
+            if (args.verbose > 0)
+                cout << "Utilizing setting port: "<< args.port << endl;
+        }
+        //create XVC instance
+        XVC *xvc = NULL;
+        xvc = new XVC(jtag, args.interface, args.port, args.verbose, args.freq);
+        delete xvc;
+        printError("Xilinx Virtual Cable Stopped! ");
+        return EXIT_FAILURE;
+    }
 
 	Device *fpga;
 	try {
@@ -640,6 +661,12 @@ int parse_opt(int argc, char **argv, struct arguments *args, jtag_pins_conf_t *p
 			("h,help", "Give this help list")
 			("verify", "Verify write operation (SPI Flash only)",
 				cxxopts::value<bool>(args->verify))
+            ("xvc",   "Xilinx Virtual Cable Functions",
+                    cxxopts::value<bool>(args->xvc))
+            ("port", "Xilinx Virtual Cable Port (default 3721)",
+                 cxxopts::value<int>(args->port))
+            ("x, interface",   "Setup the XVC IP Interface (default All Interface will be opened)",
+                 cxxopts::value<string>(args->interface))
 			("V,Version", "Print program version");
 
 		options.parse_positional({"bitstream"});
@@ -769,6 +796,7 @@ int parse_opt(int argc, char **argv, struct arguments *args, jtag_pins_conf_t *p
 			!args->detect &&
 			!args->protect_flash &&
 			!args->unprotect_flash &&
+			!args->xvc &&
 			!args->reset) {
 			printError("Error: bitfile not specified");
 			cout << options.help() << endl;

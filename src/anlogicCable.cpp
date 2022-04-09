@@ -297,3 +297,9 @@ int AnlogicCable::write(uint8_t *in_buf, uint8_t *out_buf, int len, int rd_len)
 	}
 	return len;
 }
+
+/* TMS TDI TDO */
+int AnlogicCable::writeTMSTDI(uint8_t *tms, uint8_t *tdi, uint8_t *tdo, uint32_t len)
+{
+    return 0;
+}

@@ -36,7 +36,8 @@ class CH552_jtag : public JtagInterface, private FTDIpp_MPSSE {
 	int toggleClk(uint8_t tms, uint8_t tdi, uint32_t clk_len) override;
 	/* TDI */
 	int writeTDI(uint8_t *tx, uint8_t *rx, uint32_t len, bool end) override;
-
+    /* TMS TDI TDO */
+    int writeTMSTDI(uint8_t *tms, uint8_t *tdi, uint8_t *tdo, uint32_t len) override;
 	/*!
 	 * \brief return internal buffer size (in byte).
 	 * \return _buffer_size -3 for mpsse cmd + size, -1 for potential SEND_IMMEDIATE

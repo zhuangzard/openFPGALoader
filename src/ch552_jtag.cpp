@@ -341,3 +341,9 @@ int CH552_jtag::writeTDI(uint8_t *tdi, uint8_t *tdo, uint32_t len, bool last)
 
 	return 0;
 }
+
+/* TMS TDI TDO */
+int CH552_jtag::writeTMSTDI(uint8_t *tms, uint8_t *tdi, uint8_t *tdo, uint32_t len)
+{
+    return 0;
+}

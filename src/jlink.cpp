@@ -731,3 +731,10 @@ bool Jlink::jlink_scan_usb()
 
 	return true;
 }
+
+
+/* TMS TDI TDO */
+int Jlink::writeTMSTDI(uint8_t *tms, uint8_t *tdi, uint8_t *tdo, uint32_t len)
+{
+    return 0;
+}

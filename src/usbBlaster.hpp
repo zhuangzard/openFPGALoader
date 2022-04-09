@@ -67,6 +67,16 @@ class UsbBlaster : public JtagInterface {
 	 * */
 	int toggleClk(uint8_t tms, uint8_t tdi, uint32_t clk_len) override;
 
+    /*!
+        * \brief send TMD and TDI and receive tdo bits;
+        * \param tms: array of TMS values (used to write)
+        * \param tdi: array of TDI values (used to write)
+        * \param tdo: array of TDO values (used when read)
+        * \param len: number of bit to send/receive
+        * \return number of bit written and/or read
+        */
+    int writeTMSTDI(uint8_t *tms, uint8_t *tdi, uint8_t *tdo, uint32_t len) override;
+
 	/*!
 	 * \brief return internal buffer size (in byte).
 	 * \return _buffer_size divided by 2 (two byte for clk) and divided by 8 (one
