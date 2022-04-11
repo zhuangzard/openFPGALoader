@@ -1,0 +1,25 @@
+/Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/Applications/CLion.app/Contents/bin/ninja/mac/ninja -G Ninja /Users/taisen/Downloads/Working/github/openFPGALoader
+-- The CXX compiler identification is AppleClang 13.1.6.13160021
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Found PkgConfig: /usr/local/bin/pkg-config (found version "0.29.2") 
+-- Checking for module 'libftdi1'
+--   Found libftdi1, version 1.5
+-- Checking for module 'libusb-1.0'
+--   Found libusb-1.0, version 1.0.25
+-- Checking for module 'hidapi-hidraw'
+--   No package 'hidapi-hidraw' found
+-- Checking for module 'hidapi-libusb'
+--   No package 'hidapi-libusb' found
+-- Checking for module 'zlib'
+--   Found zlib, version 1.2.11
+-- Checking for module 'libudev'
+--   No package 'libudev' found
+libudev not found, disabling udev support and -D parameter
+hidapi-libusb not found: cmsis_dap support disabled
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /Users/taisen/Downloads/Working/github/openFPGALoader/cmake-build-debug

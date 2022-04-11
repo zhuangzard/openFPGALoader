@@ -284,8 +284,8 @@ void XVC::showBuf(const char *name, const unsigned char *buf, int numBytes)
 {
     int i;
     printf("%s%4d:", name, numBytes);
-    if (numBytes > 40) numBytes = 40;
-    for (i = 0 ; i < numBytes ; i++) printf(" %02X", buf[i]);
+    if (numBytes > 2000) numBytes = 2000;
+    for (i = 0 ; i < numBytes ; i++) printf("\\x%02X", buf[i]);
     printf("\n");
 }
 
@@ -328,7 +328,7 @@ int XVC::GetidCode()
     _jtag->go_test_logic_reset();
    // _jtag->shiftIR(IDCODE, 6);
     _jtag->shiftDR(tx_data, rx_data, 32);
-    showBuf("Reading ID is: ", rx_data, 4);
+    if (_verbose) showBuf("Reading ID is: ", rx_data, 4);
     _jtag->go_test_logic_reset();
     id = ((rx_data[0] & 0x000000ff) |
           ((rx_data[1] << 8) & 0x0000ff00) |
@@ -370,37 +370,6 @@ int XVC::shift(xvcInfo *usb, FILE *fp)
         showBuf("TDI", usb->tdiBuf, nBytes);
     }
     int nSendBytes = (_jtag->direct_read_write(usb->tmsBuf, usb->tdiBuf, usb->tdoBuf, nBits)+ 7) / 8;
-
-//    int project_calculation = _jtag->calculateTMS(usb->tmsBuf, nBits);
-//    printf("project stat is %d and current stat is %d\n", project_calculation, _jtag->_state);
-//    if(_jtag->_state != _jtag->SHIFT_IR && _jtag->_state != _jtag->SHIFT_DR){
-//        for (uint32_t i = 0; i < nBits; ++i)
-//        {
-//            int tms = !!(usb->tmsBuf[i/8] & (1<<(i&7)));
-//            _jtag->setTMS(tms);
-//        }
-//        _jtag->flushTMS(false);
-//    }else{
-//        if(project_calculation!= _jtag->_state)
-//        {
-//            for (uint32_t i = 0; i < nBits; ++i)
-//            {
-//                int tms = !!(usb->tmsBuf[i/8] & (1<<(i&7)));
-//                _jtag->setTMS(tms);
-//            }
-//            _jtag->flushTMS(false);
-//        }else{
-//            _jtag->read_write(usb->tdiBuf, usb->tdoBuf, nBits, 0);
-//        }
-//    }
-//    if (_verbose>0) {
-//        showBuf("TDO", usb->tdoBuf, nBytes);
-//    }
-//    if (_verbose>0) {
-//        if (std::memcmp(usb->tdiBuf, usb->tdoBuf, nBytes)) {
-//            printf("Loopback failed.\n");
-//        }
-//    }
 
     return nSendBytes;
 }
@@ -464,13 +433,15 @@ void XVC::processCommands(FILE *fp, int fd, xvcInfo *usb)
                         if (!matchInput(fp, "ttck:")) return;
                         if (!fetch32(fp, &num)) return;
                         frequency = 1000000000 / num;
+                        int real_num = 1000000000 / _frequency;
                         if (_verbose>0) {
 //                            printf("settck:%d  (%d Hz)\n", (int)num, frequency);
                             printf("Utilizing System Frequency Setting %d instead of settck:%d  (%d Hz)\n", _frequency, (int)num, frequency);
                         }
+
                         //TODO add jtag setup speed here
                         //if (!ftdiSetClockSpeed(usb, frequency)) return;
-                        if (!reply32(fd, num)) return;
+                        if (!reply32(fd, real_num)) return;
                     }
                         break;
                     case 'h':

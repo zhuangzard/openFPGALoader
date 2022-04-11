@@ -1,0 +1,414 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="openFPGALoader"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install/local">
+				<Option working_dir="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/Makefile&quot;  VERBOSE=1 install/local"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install/strip">
+				<Option working_dir="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/Makefile&quot;  VERBOSE=1 install/strip"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="install">
+				<Option working_dir="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/Makefile&quot;  VERBOSE=1 install"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="list_install_components">
+				<Option working_dir="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/Makefile&quot;  VERBOSE=1 list_install_components"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="openFPGALoader">
+				<Option output="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/openFPGALoader" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DVERSION=&quot;v0.8.0&quot;"/>
+					<Add option="-DDATA_DIR=&quot;/usr/local/share&quot;"/>
+					<Add option="-DISE_DIR=&quot;/opt/Xilinx/14.7&quot;"/>
+					<Add option="-DHAS_ZLIB=1"/>
+					<Add option="-DFTDI_VERSION=105"/>
+					<Add directory="/usr/local/Cellar/libusb/1.0.25/include/libusb-1.0"/>
+					<Add directory="/usr/local/Cellar/libftdi/1.5_2/include/libftdi1"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/13.1.6/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/Makefile&quot;  VERBOSE=1 openFPGALoader"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="openFPGALoader/fast">
+				<Option output="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/openFPGALoader" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DVERSION=&quot;v0.8.0&quot;"/>
+					<Add option="-DDATA_DIR=&quot;/usr/local/share&quot;"/>
+					<Add option="-DISE_DIR=&quot;/opt/Xilinx/14.7&quot;"/>
+					<Add option="-DHAS_ZLIB=1"/>
+					<Add option="-DFTDI_VERSION=105"/>
+					<Add directory="/usr/local/Cellar/libusb/1.0.25/include/libusb-1.0"/>
+					<Add directory="/usr/local/Cellar/libftdi/1.5_2/include/libftdi1"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../include/c++/v1"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/13.1.6/include"/>
+					<Add directory="/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include"/>
+					<Add directory="/System/Library/Frameworks"/>
+					<Add directory="/Library/Frameworks"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/Makefile&quot;  VERBOSE=1 openFPGALoader/fast"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/altera.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/altera.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/anlogic.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/anlogic.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/anlogicBitParser.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/anlogicBitParser.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/anlogicCable.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/anlogicCable.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/bitparser.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/bitparser.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/board.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/cable.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/ch552_jtag.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/ch552_jtag.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/colognechip.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/colognechip.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/colognechipCfgParser.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/colognechipCfgParser.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/configBitstreamParser.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/configBitstreamParser.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/cxxopts.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/device.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/device.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/dfu.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/dfu.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/dfuFileParser.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/dfuFileParser.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/dirtyJtag.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/dirtyJtag.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/display.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/display.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/efinix.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/efinix.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/efinixHexParser.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/efinixHexParser.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/epcq.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/epcq.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/feaparser.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/feaparser.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/fsparser.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/fsparser.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/ftdiJtagBitbang.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/ftdiJtagBitbang.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/ftdiJtagMPSSE.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/ftdiJtagMPSSE.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/ftdipp_mpsse.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/ftdipp_mpsse.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/ftdispi.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/ftdispi.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/fx2_ll.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/fx2_ll.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/gowin.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/gowin.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/ice40.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/ice40.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/ihexParser.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/ihexParser.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/jedParser.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/jedParser.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/jlink.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/jlink.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/jtag.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/jtag.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/jtagInterface.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/lattice.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/lattice.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/latticeBitParser.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/latticeBitParser.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/main.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/mcsParser.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/mcsParser.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/part.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/progressBar.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/progressBar.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/rawParser.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/rawParser.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/spiFlash.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/spiFlash.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/spiFlashdb.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/spiInterface.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/spiInterface.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/svf_jtag.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/svf_jtag.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/usbBlaster.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/usbBlaster.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/xilinx.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/xilinx.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/xilinxMapParser.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/xilinxMapParser.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/xvc.cpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/src/xvc.hpp">
+			<Option target="openFPGALoader"/>
+		</Unit>
+		<Unit filename="/Users/taisen/Downloads/Working/Jtag/Taisen_OpenFPGALoader/openFPGALoader/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>
